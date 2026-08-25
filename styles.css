@@ -530,7 +530,7 @@ html{scroll-behavior:smooth;}
 
 /* ── Showcase — the next screen ──────────────────────────────────── */
 .showcase{
-  position:relative; z-index:1;
+  position:relative; z-index:70;
   min-height:100svh;
   display:flex; flex-direction:column; justify-content:center;
   gap:clamp(20px,4vh,44px);
