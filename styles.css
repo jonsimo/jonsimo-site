@@ -83,7 +83,7 @@ body{
 /* ── Header ──────────────────────────────────────────────────────── */
 .head{text-align:center;}
 .wordmark{
-  position:relative;
+  position:relative; cursor:pointer; user-select:none;
   margin:0;
   font-family:var(--pixel);
   font-size:clamp(17px,3.4vw,32px);
@@ -132,8 +132,8 @@ body{
   position:relative;
   display:flex; flex-direction:column;
   align-items:center; justify-content:center;
-  gap:clamp(6px,1.1vh,12px);
-  padding:clamp(14px,2.4vh,26px) clamp(16px,3vw,34px);
+  gap:clamp(5px,.9vh,10px);
+  padding:clamp(8px,1.2vh,14px) clamp(16px,3vw,34px);
   text-decoration:none; color:inherit;
   isolation:isolate; overflow:hidden;
   min-width:0;
@@ -184,14 +184,10 @@ body{
   display:flex; align-items:center; justify-content:center;
   gap:clamp(12px,2.4vw,28px);
   width:100%; min-width:0;
-  height:clamp(58px,12vh,112px);
+  height:clamp(60px,15vh,150px);
 }
 /* Marks are sized by HEIGHT, never width — a 2.5:1 wordmark and a square
    pixel sprite only read as siblings if they share a baseline band. */
-.art{
-  display:flex; align-items:center; justify-content:center;
-  height:100%; min-width:0; color:var(--c);
-}
 
 .name{
   font-family:var(--pixel);
@@ -210,56 +206,58 @@ body{
   clip-path:inset(50%); white-space:nowrap;
 }
 
-/* Marks */
-.vd-logo{
-  height:100%; width:auto; max-width:min(72vw,560px);
-  color:var(--c);
-  filter:drop-shadow(0 0 6px rgba(var(--c-rgb),.34));
+/* ── Marks ────────────────────────────────────────────────────────
+   The projects' real logos, lifted from the game menu, the installer art
+   and the title PSD. The neon ones were painted on black, so their alpha
+   is derived from luminance at build time (see README) — the glow fades
+   out instead of ending at a crop rectangle, and no blend mode is needed. */
+.mark,.type{
+  display:block; width:auto; max-width:100%;
+  height:100%; object-fit:contain;
   transition:filter .35s var(--ease);
 }
-.tile:hover .vd-logo,.tile:focus-visible .vd-logo{
-  filter:drop-shadow(0 0 3px rgba(var(--c-rgb),.8)) drop-shadow(0 0 20px rgba(var(--c-rgb),.4));
+[data-brand="vd"] .type,
+[data-brand="at"] .type,
+[data-brand="at"] .mark{
+  filter:brightness(1.18) drop-shadow(0 0 12px rgba(var(--c-rgb),.26));
 }
-.at-logo{
-  height:82%; width:auto;
-  color:var(--c);
-  filter:drop-shadow(0 0 6px rgba(var(--c-rgb),.34));
-  transition:filter .35s var(--ease);
+.tile:hover .type,.tile:focus-visible .type,
+.tile:hover .mark,.tile:focus-visible .mark{
+  filter:brightness(1.24) drop-shadow(0 0 6px rgba(var(--c-rgb),.55))
+         drop-shadow(0 0 26px rgba(var(--c-rgb),.30));
 }
-.tile:hover .at-logo,.tile:focus-visible .at-logo{
-  filter:drop-shadow(0 0 3px rgba(var(--c-rgb),.85)) drop-shadow(0 0 20px rgba(var(--c-rgb),.42));
+/* Neon tube striking: a stepped flicker, then settle. Not an ease — a tube
+   that fades up smoothly reads as a dimmer, not as ignition. */
+.tile:hover .type,.tile:focus-visible .type{animation:ignite .42s steps(1,end);}
+@keyframes ignite{
+  0%{opacity:.55} 12%{opacity:1} 22%{opacity:.4} 34%{opacity:1}
+  46%{opacity:.7} 58%{opacity:1} 100%{opacity:1}
 }
 
-/* Stroke-draw: JS stamps pathLength="1" on every stroked child, so one
-   dashoffset rule re-draws any mark regardless of its real path length. */
-.vd-logo [data-draw],.at-logo [data-draw]{
-  stroke-dasharray:1; stroke-dashoffset:0;
-}
-.tile:hover .vd-logo [data-draw],.tile:focus-visible .vd-logo [data-draw],
-.tile:hover .at-logo [data-draw],.tile:focus-visible .at-logo [data-draw]{
-  animation:draw .85s var(--ease) both;
-  animation-delay:calc(var(--i,0) * 14ms);
-}
-@keyframes draw{from{stroke-dashoffset:1}to{stroke-dashoffset:0}}
-
-/* Codex Jr's mark is pixel art — it gets a pixel-appropriate FX: a stepped
-   bob and a gold rim, not a smooth vector redraw. */
-.wizard{
-  height:86%; width:auto;
+/* Per-brand proportions inside the shared lockup band. */
+[data-brand="vd"] .type{height:114%;}
+[data-brand="at"] .mark{height:96%;}
+[data-brand="at"] .type{height:26%;}
+[data-brand="cj"] .type{height:58%; filter:drop-shadow(0 0 14px rgba(255,111,200,.28));}
+[data-brand="cj"] .mark{
+  height:100%;
   image-rendering:pixelated;
-  filter:drop-shadow(0 0 8px rgba(var(--c-rgb),.30));
-  transition:filter .35s var(--ease);
+  filter:drop-shadow(0 0 10px rgba(var(--c-rgb),.32));
 }
-.tile:hover .wizard,.tile:focus-visible .wizard{
+/* Codex Jr's wizard is pixel art — a stepped bob, never a smooth vector redraw. */
+[data-brand="cj"]:hover .mark,[data-brand="cj"]:focus-visible .mark{
   animation:bob .5s steps(2,end) infinite;
-  filter:drop-shadow(0 0 4px rgba(247,213,7,.55)) drop-shadow(0 0 18px rgba(var(--c-rgb),.5));
+  filter:drop-shadow(0 0 5px rgba(247,213,7,.5)) drop-shadow(0 0 20px rgba(var(--c-rgb),.5));
+}
+[data-brand="cj"]:hover .type,[data-brand="cj"]:focus-visible .type{
+  filter:brightness(1.12) drop-shadow(0 0 18px rgba(255,111,200,.55));
 }
 @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
-[data-brand="cj"] .name{
-  background:linear-gradient(180deg,var(--c2) 0%,#ff6fc8 55%,#b140f4 100%);
-  -webkit-background-clip:text; background-clip:text; color:transparent;
-  -webkit-text-fill-color:transparent;
-  filter:drop-shadow(0 0 10px rgba(25,134,255,.45));
+
+/* The wordmarks ARE the names — keep the text for screen readers only. */
+.name{
+  position:absolute; width:1px; height:1px; overflow:hidden;
+  clip-path:inset(50%); white-space:nowrap;
 }
 
 /* Meta line */
@@ -271,11 +269,7 @@ body{
 }
 .desc{color:var(--ink-dim); transition:color .3s var(--ease);}
 .tile:hover .desc,.tile:focus-visible .desc{color:var(--ink);}
-.url{
-  color:var(--ink-faint);
-  transition:color .3s var(--ease);
-  white-space:nowrap;
-}
+.url{color:var(--ink-faint); transition:color .3s var(--ease); white-space:nowrap;}
 .tile:hover .url,.tile:focus-visible .url{color:rgba(var(--c-rgb),.95);}
 .arrow{
   display:inline-block; font-style:normal; font-size:.8em;
@@ -284,28 +278,67 @@ body{
 }
 .tile:hover .arrow,.tile:focus-visible .arrow{transform:translateX(2px); opacity:1;}
 
-/* ── Footer ──────────────────────────────────────────────────────── */
-.foot{display:flex; flex-direction:column; align-items:center; gap:clamp(10px,1.6vh,16px);}
-.socials{display:flex; align-items:center; gap:clamp(16px,3.4vw,34px);}
-.socials a{
-  display:block; color:var(--ink-dim);
-  transition:color .28s var(--ease),transform .28s var(--ease);
+/* ── Footer: the socials are a FOURTH ROW, not a footnote ─────────
+   Same border, same ground, same bracket language as a channel. */
+.foot{display:flex; flex-direction:column; gap:clamp(9px,1.4vh,14px);}
+
+.socials{
+  display:grid;
+  grid-template-columns:repeat(5,minmax(0,1fr));
+  gap:clamp(8px,1.2vw,14px);
+  height:clamp(78px,11.5vh,116px);
 }
-.socials svg{
-  width:clamp(21px,2.6vw,25px); height:auto; display:block;
+[data-net="ig"]  {--c:#ff6fc8; --c-rgb:255,111,200;}
+[data-net="yt"]  {--c:#ff4d4d; --c-rgb:255,77,77;}
+[data-net="tt"]  {--c:#4ef1cc; --c-rgb:78,241,204;}
+[data-net="li"]  {--c:#1986ff; --c-rgb:25,134,255;}
+[data-net="mail"]{--c:#f7d507; --c-rgb:247,213,7;}
+
+.slink{
+  position:relative; overflow:hidden; min-width:0;
+  display:flex; flex-direction:column;
+  align-items:center; justify-content:center;
+  gap:clamp(5px,.9vh,9px);
+  text-decoration:none; color:var(--ink-dim);
+  border:1px solid var(--line); border-radius:3px;
+  background:var(--bg-lift);
+  transition:color .3s var(--ease),border-color .3s var(--ease),
+             transform .3s var(--ease),background .3s var(--ease);
+}
+.slink:hover,.slink:focus-visible{
+  color:var(--c);
+  border-color:rgba(var(--c-rgb),.6);
+  transform:translateY(-2px);
+}
+.slink:focus-visible{outline:2px solid rgba(var(--c-rgb),.9); outline-offset:3px;}
+.slink:active{transform:translateY(0) scale(.99);}
+/* Bloom lives on its own layer so it can fade without repainting the icon. */
+.sglow{
+  position:absolute; inset:0; opacity:0; pointer-events:none;
+  background:radial-gradient(120% 150% at 50% 118%,rgba(var(--c-rgb),.20),transparent 66%);
+  transition:opacity .3s var(--ease);
+}
+.slink:hover .sglow,.slink:focus-visible .sglow{opacity:1;}
+
+.slink svg{
+  width:clamp(26px,3.6vw,40px); height:auto; display:block;
   fill:none; stroke:currentColor; stroke-width:1.5;
   stroke-linecap:round; stroke-linejoin:round;
+  transition:filter .3s var(--ease);
 }
-.socials svg .dot{fill:currentColor; stroke:none;}
-/* YouTube's play triangle reads as a solid at this size. */
-.socials a[title="YouTube"] svg path{fill:currentColor; stroke-width:1;}
-.socials a:hover,.socials a:focus-visible{
-  color:#4ef1cc; transform:translateY(-2px);
-  filter:drop-shadow(0 0 6px rgba(78,241,204,.6));
+.slink svg .dot,.slink svg .fill{fill:currentColor; stroke:none;}
+.slink:hover svg,.slink:focus-visible svg{
+  filter:drop-shadow(0 0 6px rgba(var(--c-rgb),.7));
+  animation:jitter .28s steps(2) 2;
 }
-.socials a:hover svg{animation:jitter .28s steps(2) 2;}
 @keyframes jitter{0%{transform:translateX(0)}50%{transform:translateX(1.2px)}100%{transform:translateX(0)}}
-.socials a:focus-visible{outline:2px solid rgba(78,241,204,.8); outline-offset:5px; border-radius:3px;}
+
+.slabel{
+  font-size:clamp(8.5px,1.05vw,10.5px);
+  letter-spacing:.17em; text-transform:uppercase;
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+  max-width:100%;
+}
 
 .colophon{
   display:flex; align-items:center; gap:14px; flex-wrap:wrap; justify-content:center;
@@ -313,45 +346,26 @@ body{
   color:var(--ink-faint);
 }
 .colophon .rule{width:34px; height:1px; background:var(--line);}
-.hint kbd{
-  font:inherit; border:1px solid var(--line); border-radius:2px;
-  padding:1px 5px; color:var(--ink-dim);
-}
 
-/* ── Hidden console ──────────────────────────────────────────────── */
-.console{
-  position:fixed; inset:auto 0 0 0; z-index:80;
-  max-height:min(58vh,460px); display:flex; flex-direction:column;
-  background:rgba(3,7,6,.96);
-  border-top:1px solid rgba(78,241,204,.4);
-  box-shadow:0 -18px 60px rgba(0,0,0,.7),0 -1px 22px rgba(78,241,204,.14);
-  font-size:12.5px; color:#62f7d8;
-  animation:slideUp .22s var(--ease) both;
-}
-@keyframes slideUp{from{transform:translateY(100%)}to{transform:none}}
-.console[hidden]{display:none;}
-.console-out{
-  overflow-y:auto; padding:14px 16px 4px;
-  white-space:pre-wrap; line-height:1.55; word-break:break-word;
-}
-.console-out .cmd{color:var(--ink);}
-.console-out .err{color:#ff6fc8;}
-.console-out a{color:#7ef7e0;}
-.console-form{display:flex; gap:9px; align-items:center; padding:9px 16px 14px;}
-.console-form .prefix{color:#4ef1cc; flex:none;}
-#console-in{
-  flex:1; min-width:0; background:none; border:0; outline:0;
-  color:#7ef7e0; font:inherit; font-family:var(--mono); caret-color:#4ef1cc;
-}
-
-/* ── Idle screensaver ────────────────────────────────────────────── */
-.saver{position:fixed; inset:0; z-index:90; background:#000;}
+/* ── Idle screensaver ──────────────────────────────────────────── */
+.saver{position:fixed; inset:0; z-index:90; background:#000; cursor:none;}
 .saver[hidden]{display:none;}
 .saver-mark{
   position:absolute; top:0; left:0;
-  font-family:var(--pixel); font-size:34px; letter-spacing:.1em;
-  color:#4ef1cc; text-shadow:0 0 14px currentColor;
+  width:clamp(150px,17vw,240px);
+  color:#4ef1cc;
   will-change:transform;
+  filter:drop-shadow(0 0 14px currentColor);
+  transition:color .25s linear;
+}
+.saver-mark svg{width:100%; height:auto; display:block;}
+/* The corner hit — the entire reason anyone watches this. */
+.saver-mark.corner{animation:cornerHit 1.4s var(--ease);}
+@keyframes cornerHit{
+  0%{filter:drop-shadow(0 0 14px currentColor); transform-origin:center}
+  6%{filter:drop-shadow(0 0 4px #fff) drop-shadow(0 0 40px currentColor) brightness(2.6)}
+  18%{filter:drop-shadow(0 0 3px #fff) drop-shadow(0 0 70px currentColor) brightness(2)}
+  100%{filter:drop-shadow(0 0 14px currentColor)}
 }
 
 /* ── Easter egg: VECTORSCOPE MODE (konami) ───────────────────────── */
@@ -360,14 +374,13 @@ body.vectorscope .tile{
   --c:#33dd33; --c-rgb:51,221,51; --c2:#8bff8b;
   background:rgba(6,16,6,.9);
 }
-body.vectorscope .wizard{
-  filter:grayscale(1) brightness(2.4) sepia(1) hue-rotate(58deg) saturate(7)
-         drop-shadow(0 0 10px rgba(51,221,51,.7));
+body.vectorscope .mark,body.vectorscope .type{
+  filter:grayscale(1) brightness(2.2) sepia(1) hue-rotate(58deg) saturate(6)
+         drop-shadow(0 0 10px rgba(51,221,51,.6));
 }
-body.vectorscope [data-brand="cj"] .name{
-  background:none; -webkit-text-fill-color:#33dd33; color:#33dd33; filter:none;
-}
-body.vectorscope .wordmark,body.vectorscope .socials a,body.vectorscope .desc{color:#33dd33;}
+body.vectorscope [data-brand="cj"] .mark{image-rendering:pixelated;}
+body.vectorscope .wordmark,body.vectorscope .slink,body.vectorscope .desc{color:#33dd33;}
+body.vectorscope .slink{--c:#33dd33; --c-rgb:51,221,51;}
 body.vectorscope .crt-scan{opacity:.7;}
 body.vectorscope .stage{
   filter:drop-shadow(0 0 3px rgba(51,221,51,.5));
@@ -389,17 +402,24 @@ body.degauss .stage{animation:degauss .9s var(--ease);}
 
 /* ── Responsive ──────────────────────────────────────────────────── */
 @media (max-width:720px){
-  .channels{grid-template-rows:none; grid-auto-rows:minmax(150px,auto); min-height:0;}
-  .lock{flex-direction:column; gap:12px; height:auto;}
-  .art{height:clamp(52px,11vh,84px);}
-  [data-brand="vd"] .art{height:auto;}
+  .channels{grid-template-rows:none; grid-auto-rows:minmax(140px,auto); min-height:0;}
+  /* Stacked, so the band no longer sets the size — each mark is capped by
+     max-height with height:auto, which keeps its aspect ratio intact. */
+  .lock{flex-direction:column; gap:10px; height:auto;}
+  .mark,.type{height:auto; width:auto; max-width:82%;}
+  .mark{max-height:clamp(58px,13vh,96px);}
+  .type{max-height:clamp(30px,7vh,52px);}
+  [data-brand="vd"] .type{max-height:clamp(58px,14vh,104px); max-width:min(74vw,340px);}
+  [data-brand="at"] .type{max-height:clamp(18px,4.2vh,30px); max-width:min(72vw,300px);}
+  [data-brand="cj"] .type{max-height:clamp(32px,7.5vh,54px);}
   .meta{flex-direction:column; gap:5px; text-align:center;}
-  .name{word-break:break-word;}
-  .vd-logo{width:min(70vw,320px); height:auto; max-width:100%;}
   .colophon{gap:9px;}
+  .socials{grid-template-columns:repeat(3,minmax(0,1fr)); height:auto;}
+  .slink{aspect-ratio:1/.72; }
 }
 @media (max-width:400px){
-  .socials{gap:15px;}
+  .socials{grid-template-columns:repeat(2,minmax(0,1fr));}
+  .slabel{font-size:9px; letter-spacing:.12em;}
 }
 
 /* ── Motion / contrast preferences ───────────────────────────────── */

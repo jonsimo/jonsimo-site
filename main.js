@@ -1,6 +1,10 @@
 /* jonsimo.com — root console.
-   No dependencies, no network calls. Everything degrades to a plain,
-   fully-usable link page if this file never runs. */
+   No dependencies, no network calls. The page is a complete, usable link
+   list without this file; everything here is decoration or an easter egg.
+
+   Easter-egg rule: every egg is either PASSIVE (it happens to you) or
+   CLICKABLE (you find it by poking something). Nothing is on a key combo,
+   because nobody discovers a key combo. */
 (function () {
   "use strict";
 
@@ -8,21 +12,8 @@
   var $  = function (s, r) { return (r || document).querySelector(s); };
   var $$ = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
 
-  /* ── year ─────────────────────────────────────────────────────── */
   var yr = $("#yr");
   if (yr) yr.textContent = String(new Date().getFullYear());
-
-  /* ── stroke-draw prep ─────────────────────────────────────────────
-     Stamp pathLength="1" on every stroked child so a single CSS rule
-     (dashoffset 1 → 0) re-draws any mark, whatever its real length,
-     and stagger them with --i so the logo assembles rather than blinks. */
-  $$(".vd-logo, .at-logo").forEach(function (svg) {
-    $$("polyline, path, circle, line, polygon, rect", svg).forEach(function (el, i) {
-      el.setAttribute("pathLength", "1");
-      el.setAttribute("data-draw", "");
-      el.style.setProperty("--i", i);
-    });
-  });
 
   /* ── typed tagline ────────────────────────────────────────────── */
   var LINE = "active projects — select a channel";
@@ -31,10 +22,10 @@
     if (reduced) {
       typed.textContent = LINE;
     } else {
-      var i = 0;
+      var ti = 0;
       (function tick() {
-        typed.textContent = LINE.slice(0, i++);
-        if (i <= LINE.length) setTimeout(tick, 34);
+        typed.textContent = LINE.slice(0, ti++);
+        if (ti <= LINE.length) setTimeout(tick, 34);
       })();
     }
   }
@@ -54,29 +45,10 @@
     });
   }
 
-  /* ═══ EASTER EGG 1 — Konami → VECTORSCOPE MODE ═══════════════════ */
-  var KONAMI = ["ArrowUp","ArrowUp","ArrowDown","ArrowDown","ArrowLeft","ArrowRight","ArrowLeft","ArrowRight","b","a"];
-  var kp = 0;
-  function vectorscope(on) {
-    var next = on === undefined ? !document.body.classList.contains("vectorscope") : on;
-    document.body.classList.toggle("vectorscope", next);
-    return next;
-  }
-
-  /* ═══ EASTER EGG 2 — CRT power-cycle (click the cursor 3×) ═══════ */
-  var clicks = 0, clickTimer = null;
+  /* ═══ EGG 1 (click) — the blinking cursor power-cycles the tube ═══ */
   var cursorEl = $("#cursor");
-  if (cursorEl) {
-    cursorEl.addEventListener("click", function () {
-      clicks++;
-      clearTimeout(clickTimer);
-      clickTimer = setTimeout(function () { clicks = 0; }, 700);
-      if (clicks >= 3) {
-        clicks = 0;
-        degauss();
-      }
-    });
-  }
+  if (cursorEl) cursorEl.addEventListener("click", degauss);
+
   function degauss() {
     if (reduced) return;
     document.body.classList.remove("degauss");
@@ -85,199 +57,121 @@
     setTimeout(function () { document.body.classList.remove("degauss"); }, 950);
   }
 
-  /* ═══ EASTER EGG 3 — hidden console (/ or ~) ═════════════════════ */
-  var box = $("#console"), out = $("#console-out"), form = $("#console-form"), input = $("#console-in");
-  var hint = $("#hint");
-
-  var LINKS = {
-    vd:    ["Vector Drift",   "https://vectordrift.io"],
-    alpha: ["Alpha Tracker",  "https://alpha.vectordrift.io"],
-    cj:    ["Codex Jr",       "https://codexjr.com"],
-    ig:    ["Instagram",      "https://www.instagram.com/jonsimo/"],
-    yt:    ["YouTube",        "https://www.youtube.com/@jonsimo"],
-    tt:    ["TikTok",         "https://www.tiktok.com/@jonsimo"],
-    li:    ["LinkedIn",       "https://ca.linkedin.com/in/jonsimo"],
-    mail:  ["Email",          "mailto:yo@jonsimo.com"]
-  };
-  var ALIAS = {
-    "vector drift":"vd", vectordrift:"vd", drift:"vd",
-    "alpha tracker":"alpha", at:"alpha", tracker:"alpha",
-    "codex jr":"cj", codexjr:"cj", codex:"cj", jr:"cj",
-    instagram:"ig", insta:"ig",
-    youtube:"yt", tiktok:"tt", tik:"tt",
-    linkedin:"li", email:"mail", contact:"mail", mailto:"mail"
-  };
-
-  function say(text, cls) {
-    var d = document.createElement("div");
-    if (cls) d.className = cls;
-    d.textContent = text;
-    out.appendChild(d);
-    out.scrollTop = out.scrollHeight;
-  }
-
-  function openConsole() {
-    if (!box || !box.hidden) return;
-    box.hidden = false;
-    if (!out.childElementCount) {
-      say("jonsimo.sys // root console");
-      say("type `help` for commands, `exit` to close.");
-      say("");
-    }
-    input.focus();
-    if (hint) hint.style.opacity = ".35";
-  }
-  function closeConsole() {
-    if (!box || box.hidden) return;
-    box.hidden = true;
-    input.blur();
-    if (hint) hint.style.opacity = "";
-  }
-
-  var HELP = [
-    "  help              this list",
-    "  ls                list channels",
-    "  open <name>       open a channel  (vd | alpha | cj | ig | yt | tt | li | mail)",
-    "  whoami            who is running this",
-    "  contact           email address",
-    "  vectorscope       toggle the green mode",
-    "  degauss           power-cycle the tube",
-    "  snake             ...not here",
-    "  clear             wipe the scrollback",
-    "  exit              close the console"
-  ];
-
-  function run(raw) {
-    var line = raw.trim();
-    if (!line) return;
-    say("jonsimo:~$ " + line, "cmd");
-    var parts = line.split(/\s+/);
-    var cmd = parts[0].toLowerCase();
-    var arg = parts.slice(1).join(" ").toLowerCase();
-
-    switch (cmd) {
-      case "help": case "?": case "man":
-        HELP.forEach(function (l) { say(l); }); break;
-
-      case "ls": case "dir":
-        say("  vd     vectordrift.io          retro vector space shooter");
-        say("  alpha  alpha.vectordrift.io    game dev project management");
-        say("  cj     codexjr.com             a magic: the gathering life tracker");
-        break;
-
-      case "whoami":
-        say("jon simo — builds games and tools.");
-        say("three channels live. more in the dark.");
-        break;
-
-      case "contact": case "email": case "mail":
-        say("yo@jonsimo.com");
-        window.open("mailto:yo@jonsimo.com", "_self");
-        break;
-
-      case "open": case "cd": case "goto": case "launch": {
-        var key = ALIAS[arg] || arg;
-        var hit = LINKS[key];
-        if (!hit) { say("no such channel: " + (arg || "(nothing)"), "err"); say("try `ls`."); break; }
-        say("opening " + hit[0] + " …");
-        window.open(hit[1], hit[1].indexOf("mailto:") === 0 ? "_self" : "_blank", "noopener");
-        break;
-      }
-
-      case "vectorscope": case "green":
-        say(vectorscope() ? "vectorscope mode: ON" : "vectorscope mode: OFF"); break;
-
-      case "degauss": case "reboot":
-        say("power-cycling…"); degauss(); break;
-
-      case "snake":
-        say("not on this box. the shooter has one:");
-        say("  vectordrift.io → type `snake`");
-        break;
-
-      case "sudo":
-        say("nice try.", "err"); break;
-
-      case "clear": case "cls":
-        out.textContent = ""; break;
-
-      case "exit": case "quit": case "q":
-        closeConsole(); break;
-
-      case "konami":
-        say("↑ ↑ ↓ ↓ ← → ← → b a"); break;
-
-      default:
-        say("command not found: " + cmd, "err");
-        say("type `help`.");
-    }
-    say("");
-  }
-
-  if (form) {
-    form.addEventListener("submit", function (e) {
-      e.preventDefault();
-      var v = input.value;
-      input.value = "";
-      run(v);
+  /* ═══ EGG 2 (click) — the name drops the page to phosphor green ═══ */
+  var wordmark = $(".wordmark");
+  if (wordmark) {
+    wordmark.addEventListener("click", function () {
+      document.body.classList.toggle("vectorscope");
+      degauss();
     });
   }
 
-  /* ═══ keyboard router ════════════════════════════════════════════ */
-  document.addEventListener("keydown", function (e) {
-    var typing = box && !box.hidden && document.activeElement === input;
+  /* ═══ EGG 3 (passive) — the screensaver ══════════════════════════
+     A DVD-bounce, but the corner hit is the whole point, so it is not
+     left to chance: on some bounces the logo genuinely AIMS at a corner
+     and misses by a sampled margin. Most attempts miss visibly, a few
+     kiss the corner, and roughly one in forty lands it exactly — about
+     one perfect corner per five minutes of watching. */
+  var IDLE_MS   = 20000;   // 20s
+  var SPEED     = 118;     // px/sec, roughly the pace of the real thing
+  var ATTEMPT_P = 0.38;    // chance a bounce becomes a run at a corner
+  var COLORS    = ["#4ef1cc", "#11cab8", "#1986ff", "#f7d507", "#ff6fc8", "#ff4d4d", "#7ef7e0"];
 
-    if (e.key === "Escape" && typing) { closeConsole(); return; }
-
-    if (!typing) {
-      if ((e.key === "/" || e.key === "~" || e.key === "`") && !e.metaKey && !e.ctrlKey && !e.altKey) {
-        e.preventDefault();
-        openConsole();
-        return;
-      }
-      // Konami — only tracked outside the console.
-      if (e.key.toLowerCase() === KONAMI[kp].toLowerCase() || e.key === KONAMI[kp]) {
-        kp++;
-        if (kp === KONAMI.length) {
-          kp = 0;
-          var on = vectorscope();
-          degauss();
-          if (box && !box.hidden) say(on ? "vectorscope mode: ON" : "vectorscope mode: OFF");
-        }
-      } else {
-        kp = (e.key === KONAMI[0]) ? 1 : 0;
-      }
-    }
-  });
-
-  /* ═══ EASTER EGG 4 — idle screensaver ════════════════════════════ */
   var saver = $("#saver"), mark = $("#saver-mark");
-  var idleTimer = null, raf = null;
-  var IDLE_MS = 60000;
+  var idleTimer = null, raf = null, last = 0;
+  var x = 0, y = 0, vx = 0, vy = 0, ci = 0;
 
-  function stopSaver() {
-    if (!saver || saver.hidden) return;
-    saver.hidden = true;
-    if (raf) cancelAnimationFrame(raf);
-    raf = null;
+  function bounds() {
+    return {
+      w: Math.max(1, saver.clientWidth  - mark.offsetWidth),
+      h: Math.max(1, saver.clientHeight - mark.offsetHeight)
+    };
+  }
+
+  function recolor() {
+    ci = (ci + 1) % COLORS.length;
+    mark.style.color = COLORS[ci];
+  }
+
+  /* Sampled miss distance, in px, for one corner attempt. */
+  function missDistance() {
+    var r = Math.random();
+    if (r < 0.025) return 0;                    // dead on
+    if (r < 0.12)  return 2 + Math.random() * 8;  // kisses it
+    return 12 + Math.random() * 55;               // visible near miss
+  }
+
+  /* Point the logo at a corner, offset by `err` along the wall it will
+     reach first. Called right after a wall bounce, so a straight line to
+     any corner on the far side is always a legal path. */
+  function aimAtCorner(b) {
+    var cx = vx > 0 ? b.w : 0;
+    var cy = vy > 0 ? b.h : 0;
+    var err = missDistance();
+
+    // Push the aim point off the corner along whichever edge keeps it inside.
+    var tx = cx, ty = cy;
+    if (Math.random() < 0.5) tx += (cx === 0 ? err : -err);
+    else                     ty += (cy === 0 ? err : -err);
+
+    var dx = tx - x, dy = ty - y;
+    var len = Math.hypot(dx, dy) || 1;
+    vx = (dx / len) * SPEED;
+    vy = (dy / len) * SPEED;
+  }
+
+  function celebrate() {
+    mark.classList.remove("corner");
+    void mark.offsetWidth;
+    mark.classList.add("corner");
+    setTimeout(function () { mark.classList.remove("corner"); }, 1400);
+  }
+
+  function step(now) {
+    if (!last) last = now;
+    var dt = Math.min((now - last) / 1000, 0.05);   // clamp tab-switch jumps
+    last = now;
+
+    var b = bounds();
+    x += vx * dt;
+    y += vy * dt;
+
+    var hitX = false, hitY = false;
+    if (x <= 0)      { x = 0;   vx = Math.abs(vx);  hitX = true; }
+    else if (x >= b.w) { x = b.w; vx = -Math.abs(vx); hitX = true; }
+    if (y <= 0)      { y = 0;   vy = Math.abs(vy);  hitY = true; }
+    else if (y >= b.h) { y = b.h; vy = -Math.abs(vy); hitY = true; }
+
+    if (hitX || hitY) {
+      recolor();
+      if (hitX && hitY) celebrate();               // the corner
+      else if (Math.random() < ATTEMPT_P) aimAtCorner(b);
+    }
+
+    mark.style.transform = "translate(" + x.toFixed(1) + "px," + y.toFixed(1) + "px)";
+    raf = requestAnimationFrame(step);
   }
 
   function startSaver() {
     if (reduced || !saver || !saver.hidden) return;
-    if (box && !box.hidden) return;
     saver.hidden = false;
-    var x = 40, y = 40, vx = 1.7, vy = 1.35;
-    var hues = ["#4ef1cc", "#11cab8", "#1986ff", "#f7d507", "#ff6fc8"];
-    var h = 0;
-    (function step() {
-      var w = saver.clientWidth  - mark.offsetWidth;
-      var hgt = saver.clientHeight - mark.offsetHeight;
-      x += vx; y += vy;
-      if (x <= 0 || x >= w) { vx = -vx; x = Math.max(0, Math.min(x, w)); h = (h + 1) % hues.length; mark.style.color = hues[h]; }
-      if (y <= 0 || y >= hgt) { vy = -vy; y = Math.max(0, Math.min(y, hgt)); h = (h + 1) % hues.length; mark.style.color = hues[h]; }
-      mark.style.transform = "translate(" + x + "px," + y + "px)";
-      raf = requestAnimationFrame(step);
-    })();
+    var b = bounds();
+    x = 40 + Math.random() * Math.max(1, b.w - 80);
+    y = 40 + Math.random() * Math.max(1, b.h - 80);
+    var a = (Math.random() * 0.6 + 0.2) * Math.PI;   // never axis-aligned
+    vx = Math.cos(a) * SPEED * (Math.random() < 0.5 ? -1 : 1);
+    vy = Math.sin(a) * SPEED * (Math.random() < 0.5 ? -1 : 1);
+    mark.style.color = COLORS[ci];
+    last = 0;
+    raf = requestAnimationFrame(step);
+  }
+
+  function stopSaver() {
+    if (!saver || saver.hidden) return;
+    saver.hidden = true;
+    mark.classList.remove("corner");
+    if (raf) cancelAnimationFrame(raf);
+    raf = null;
   }
 
   function poke() {
@@ -285,21 +179,16 @@
     clearTimeout(idleTimer);
     idleTimer = setTimeout(startSaver, IDLE_MS);
   }
-  ["pointermove", "pointerdown", "keydown", "wheel", "touchstart", "focusin"]
-    .forEach(function (ev) { addEventListener(ev, poke, { passive: true }); });
-  poke();
 
-  /* ═══ EASTER EGG 5 — devtools ════════════════════════════════════ */
-  try {
-    console.log(
-      "%c\n" +
-      "   ┌───────────────────────────────┐\n" +
-      "   │  J O N   S I M O              │\n" +
-      "   │  root console                 │\n" +
-      "   └───────────────────────────────┘\n" +
-      "   press / on the page for the real one.\n" +
-      "   ↑ ↑ ↓ ↓ ← → ← → b a still works.\n",
-      "color:#4ef1cc;font-family:monospace;font-size:12px"
-    );
-  } catch (_) {}
+  if (saver && mark) {
+    ["pointermove", "pointerdown", "keydown", "wheel", "touchstart", "focusin"]
+      .forEach(function (ev) { addEventListener(ev, poke, { passive: true }); });
+    addEventListener("resize", function () {
+      if (saver.hidden) return;
+      var b = bounds();
+      x = Math.min(x, b.w);
+      y = Math.min(y, b.h);
+    });
+    poke();
+  }
 })();
