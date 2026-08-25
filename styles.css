@@ -17,7 +17,9 @@
 
 :root{
   --band:clamp(58px,15vh,150px);
-  --lock-gap:clamp(16px,2.6vw,36px);
+  --lock-gap:clamp(18px,2.4vw,34px);
+  --lock-w:560px;
+  --icon-w:clamp(88px,13vw,150px);
   --bg:#05070a;
   --bg-lift:#080b10;
   --ink:#cfe9e2;
@@ -276,19 +278,24 @@ body{
    padding still baked in, Alpha Tracker's wordmark carried 35px of dead
    space above and 2px below and sat visibly low. */
 .lock{
-  display:flex; align-items:center; justify-content:center;
+  display:flex; align-items:center; justify-content:flex-start;
   gap:var(--lock-gap);
+  width:min(var(--lock-w),94%); margin-inline:auto;
   height:auto;                 /* hug the marks, so the caption sits a
                                   consistent distance below the ink */
-  min-width:0; max-width:100%;
+  min-width:0;
 }
+/* A fixed icon column keeps every mark the same width, so their left edges —
+   and therefore the whole icon stack — align down the page. */
+.mark{flex:0 0 var(--icon-w); width:var(--icon-w); max-width:none; object-fit:contain; object-position:center;}
 .mark,.type{
-  display:block; width:auto; height:auto;
-  max-width:100%; max-height:100%;
+  display:block; height:auto;
+  max-height:100%;
   min-height:0; min-width:0;
   object-fit:contain;
   transition:filter .35s var(--ease),transform .35s var(--ease);
 }
+.type{width:auto; max-width:100%;}
 .mark{flex:0 0 auto;}
 .type{flex:0 1 auto;}
 
@@ -296,11 +303,11 @@ body{
    and a 0.74:1 sprite carry the same optical weight rather than the same px. */
 [data-brand="cj"] .mark{height:var(--band); image-rendering:pixelated;}
 [data-brand="vd"] .mark{height:calc(var(--band) * 1.14);}
-[data-brand="at"] .mark{height:calc(var(--band) * .62);}
+[data-brand="at"] .mark{height:calc(var(--band) * .96);}
 
 [data-brand="vd"] .type{height:calc(var(--band) * 1.12);}
 [data-brand="cj"] .type{height:calc(var(--band) * .72);}
-[data-brand="at"] .type{height:calc(var(--band) * .34);}
+[data-brand="at"] .type{height:calc(var(--band) * .82);}
 
 .mark,.type{
   filter:brightness(1.08) drop-shadow(0 0 9px rgba(var(--c-rgb),.16));
@@ -337,7 +344,9 @@ body{
 /* Caption sits in the flow directly under the lockup, so the channel reads as
    one block instead of a logo with a label pinned to the floor. */
 .meta{
-  display:flex; align-items:baseline; justify-content:center;
+  display:flex; align-items:baseline; justify-content:flex-start;
+  width:min(var(--lock-w),94%); margin-inline:auto;
+  padding-left:calc(var(--icon-w) + var(--lock-gap));
   gap:clamp(8px,1.4vw,15px); flex-wrap:wrap;
   font-size:clamp(9px,1.1vw,10.5px);
   letter-spacing:.2em; text-transform:uppercase;
@@ -490,13 +499,15 @@ body.degauss .stage{animation:degauss .9s var(--ease);}
 /* ── Responsive ──────────────────────────────────────────────────── */
 @media (max-width:720px){
   .channels{grid-template-rows:none; grid-auto-rows:minmax(140px,auto); min-height:0;}
-  .lock{flex-direction:column; gap:clamp(10px,2vh,16px); height:auto;}
+  .lock{flex-direction:column; gap:clamp(10px,2vh,16px); height:auto; width:auto; justify-content:center;}
+  .mark{flex:none; width:auto;}
+  .meta{width:auto; padding-left:0; justify-content:center;}
   .mark,.type{height:auto; max-width:78%;}
   [data-brand="cj"] .mark,[data-brand="vd"] .mark{max-height:clamp(64px,14vh,104px);}
-  [data-brand="at"] .mark{max-height:clamp(48px,10vh,78px);}
+  [data-brand="at"] .mark{max-height:clamp(60px,13vh,100px);}
   [data-brand="vd"] .type{max-height:clamp(52px,12vh,88px);}
   [data-brand="cj"] .type{max-height:clamp(34px,8vh,58px);}
-  [data-brand="at"] .type{max-height:clamp(24px,5.4vh,40px); max-width:86%;}
+  [data-brand="at"] .type{max-height:clamp(52px,12vh,88px); max-width:78%;}
   .meta{flex-direction:column; align-items:center; gap:5px; text-align:center;}
   .colophon{gap:9px;}
   .socials{grid-template-columns:repeat(3,minmax(0,1fr)); height:auto;}
