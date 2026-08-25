@@ -386,7 +386,7 @@
       return s;
     }
     var ptr = 0, running = false, timer = null;
-    var STEP = 260;                       // ms between lines
+    var STEP = 105;                       // ms between lines
 
     function next() { if (running) timer = setTimeout(tick, STEP); }
 
@@ -402,7 +402,7 @@
       el.style.transform = 'translateY(0)';
       requestAnimationFrame(function () {
         if (!running) return;
-        el.style.transition = 'transform .16s linear';
+        el.style.transition = 'transform .09s linear';
         el.style.transform = 'translateY(-' + lh + 'px)';
       });
     }
@@ -427,7 +427,7 @@
         return;
       }
       el.addEventListener('transitionend', onEnd);
-      timer = setTimeout(tick, 180);
+      timer = setTimeout(tick, 90);
     }
     function stop() {
       running = false;
