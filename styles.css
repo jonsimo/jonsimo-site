@@ -104,22 +104,23 @@ body{
 /* Chromatic split — the same RGB-fringe trick the VD terminal uses. */
 /* Scanline-glitch on hover — snaps to phosphor green (same as SEE MY WORK)
    with a brief sliced-band jitter, then settles. */
-.wordmark{transition:color .18s var(--ease),text-shadow .18s var(--ease);}
+.wordmark{display:inline-block; isolation:isolate; transition:color .2s var(--ease),text-shadow .2s var(--ease);}
 .head:hover .wordmark,.wordmark:hover{
   color:#4ef1cc;
   text-shadow:0 0 6px rgba(78,241,204,.55),0 0 20px rgba(78,241,204,.25);
-  animation:nameGlitch .5s steps(1,end);
 }
-@keyframes nameGlitch{
-  0%  {clip-path:inset(0 0 0 0);      transform:translate(0)}
-  12% {clip-path:inset(0 0 62% 0);    transform:translate(-3px,0)}
-  20% {clip-path:inset(58% 0 0 0);    transform:translate(3px,0)}
-  30% {clip-path:inset(30% 0 30% 0);  transform:translate(-2px,0)}
-  40% {clip-path:inset(0 0 78% 0);    transform:translate(2px,0)}
-  52% {clip-path:inset(72% 0 0 0);    transform:translate(-1px,0)}
-  64% {clip-path:inset(0 0 0 0);      transform:translate(1px,0)}
-  100%{clip-path:inset(0 0 0 0);      transform:translate(0)}
+/* a bright scan line sweeps the letters, screen-blended so it energises the
+   dots as it passes rather than cutting them out */
+.wordmark::after{
+  content:""; position:absolute; left:-4%; right:-4%; height:34%; top:-40%;
+  pointer-events:none; opacity:0;
+  background:linear-gradient(180deg,transparent,rgba(200,255,246,.42) 50%,transparent);
+  mix-blend-mode:screen; filter:blur(1.2px);
 }
+.head:hover .wordmark::after,.wordmark:hover::after{
+  opacity:1; animation:nameScan .7s cubic-bezier(.4,0,.6,1);
+}
+@keyframes nameScan{from{top:-40%}to{top:104%}}
 @keyframes bootIn{from{opacity:0;transform:translateY(-6px) scaleY(.6);filter:blur(3px)}to{opacity:1;transform:none;filter:none}}
 
 .tagline{
@@ -278,17 +279,21 @@ body{
 
 /* Alpha Tracker — a readout being scanned: fixed rules plus a travelling bar. */
 [data-brand="at"] .fx{
+  /* screen-blend: the layer ADDS light to the neon beneath it */
+  mix-blend-mode:screen;
   background:repeating-linear-gradient(180deg,
-    rgba(var(--c-rgb),.10) 0 1px, transparent 1px 4px);
+    rgba(var(--c-rgb),.05) 0 1px, transparent 1px 5px);
 }
 [data-brand="at"] .fx b{
-  position:absolute; left:0; right:0; height:26%; top:-30%;
-  background:linear-gradient(180deg,transparent,rgba(var(--c-rgb),.22) 48%,
-             rgba(var(--c-rgb),.42) 50%,rgba(var(--c-rgb),.22) 52%,transparent);
-  animation:scanbar 2.2s linear infinite paused;
+  position:absolute; left:0; right:0; height:48%; top:-48%;
+  background:linear-gradient(180deg,
+    transparent 0%, rgba(var(--c-rgb),.07) 38%,
+    rgba(224,255,248,.28) 50%, rgba(var(--c-rgb),.07) 62%, transparent 100%);
+  filter:blur(2px);
+  animation:scanbar 2.8s cubic-bezier(.42,0,.58,1) infinite paused;
 }
 [data-brand="at"]:hover .fx b,[data-brand="at"]:focus-visible .fx b{animation-play-state:running;}
-@keyframes scanbar{from{top:-30%}to{top:104%}}
+@keyframes scanbar{from{top:-48%}to{top:104%}}
 
 /* ── Lockup ──────────────────────────────────────────────────────
    One centred group per channel: icon, wordmark, caption directly beneath.
