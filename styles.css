@@ -294,6 +294,7 @@ body{
   text-shadow:0 0 6px rgba(var(--c-rgb),.25);
   will-change:transform;
 }
+[data-brand="at"] .console > span{display:block; white-space:pre;}
 [data-brand="at"] .console .c{color:rgba(var(--c-rgb),.62);}   /* commands brighter */
 [data-brand="at"] .console .k{color:rgba(126,247,224,.7);}     /* ok/checks */
 /* stepped line-append is JS-driven (see main.js) */

@@ -342,11 +342,15 @@
       media.appendChild(f);
     });
   });
-  /* ═══ Alpha Tracker console — lines get WRITTEN in at the bottom, older
-     lines step up, like a live command line. JS-driven, only while open. ═══ */
+  /* ═══ Alpha Tracker console — grows DOWN from empty, then scrolls UP ═══
+     On hover: lines are written in one at a time, filling downward. Once the
+     stack reaches the bottom of the box it starts scrolling up — new line in
+     at the bottom, oldest drops off the top — and keeps looping the command
+     list in that same ever-growing style for as long as you hover. */
   (function () {
     var tile = document.querySelector('.tile[data-brand="at"]');
-    var el = tile && tile.querySelector('.console');
+    var fx = tile && tile.querySelector('.fx');
+    var el = fx && fx.querySelector('.console');
     if (!el) return;
     var LINES = [
       ['c', '$ at sync --project vector-drift'],
@@ -374,47 +378,56 @@
       ['', '  rebuild  ] tracing 388 segments'],
       ['k', '  ✓ sprite hot-reloaded']
     ];
-    function mkLine(idx) {
-      var r = LINES[idx % LINES.length];
+    function mkLine(i) {
+      var r = LINES[i % LINES.length];
       var s = document.createElement('span');
       if (r[0]) s.className = r[0];
       s.textContent = r[1];
       return s;
     }
-    var ptr = 0, running = false, lh = 0, timer = null, onEnd = null;
+    var ptr = 0, running = false, timer = null;
+    var STEP = 260;                       // ms between lines
 
-    function fill() {           // prefill enough lines to cover the box
-      el.style.transition = 'none';
-      el.style.transform = 'translateY(0)';
-      el.innerHTML = '';
-      for (var i = 0; i < 22; i++) el.appendChild(mkLine(ptr++));
-      lh = el.lastChild ? el.lastChild.offsetHeight : 16;
-    }
-    function step() {
+    function next() { if (running) timer = setTimeout(tick, STEP); }
+
+    function tick() {
       if (!running) return;
-      el.appendChild(mkLine(ptr++));         // write the new line at the bottom
+      var line = mkLine(ptr++);
+      el.appendChild(line);                       // write next line at the bottom
+      // still room? keep growing downward.
+      if (el.offsetHeight <= fx.clientHeight) { next(); return; }
+      // full: slide the whole stack up by one line, then drop the top line.
+      var lh = line.offsetHeight || 16;
       el.style.transition = 'none';
       el.style.transform = 'translateY(0)';
-      // next frame: slide the whole stack up by one line
       requestAnimationFrame(function () {
         if (!running) return;
-        el.style.transition = 'transform .14s linear';
+        el.style.transition = 'transform .16s linear';
         el.style.transform = 'translateY(-' + lh + 'px)';
       });
     }
-    onEnd = function (e) {
-      if (e.propertyName !== 'transform') return;
+    function onEnd(e) {
+      if (e.propertyName !== 'transform' || !running) return;
       el.style.transition = 'none';
-      if (el.firstChild) el.removeChild(el.firstChild);   // drop the top line
+      if (el.firstChild) el.removeChild(el.firstChild);
       el.style.transform = 'translateY(0)';
-      if (running) timer = setTimeout(step, 150 + Math.random() * 220);
-    };
+      next();
+    }
 
     function start() {
-      if (running || reduced) { if (reduced) fill(); return; }
-      running = true; fill();
+      if (running) return;
+      running = true;
+      el.innerHTML = '';                          // begin empty, grow from the top
+      el.style.transition = 'none';
+      el.style.transform = 'translateY(0)';
+      ptr = 0;
+      if (reduced) {                              // no motion: just fill it once
+        for (var i = 0; el.offsetHeight <= fx.clientHeight && i < LINES.length * 2; i++)
+          el.appendChild(mkLine(ptr++));
+        return;
+      }
       el.addEventListener('transitionend', onEnd);
-      timer = setTimeout(step, 200);
+      timer = setTimeout(tick, 180);
     }
     function stop() {
       running = false;
