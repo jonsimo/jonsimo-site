@@ -280,7 +280,6 @@ body{
 [data-brand="vd"] .fx i:nth-child(13){top:93%;width:105px; animation-duration:1.14s; animation-delay:1.3s}
 [data-brand="vd"] .fx i:nth-child(14){top:4%; width:42px; animation-duration:1.92s; animation-delay:1.7s}
 
-/* Alpha Tracker — a readout being scanned: fixed rules plus a travelling bar. */
 /* Alpha Tracker — a dim, fast dev-console streaming behind the mark, like a
    boot log. Sits under the gamepad + wordmark; only runs while the tile is open. */
 [data-brand="at"] .fx{
@@ -297,7 +296,7 @@ body{
 }
 [data-brand="at"] .console .c{color:rgba(var(--c-rgb),.62);}   /* commands brighter */
 [data-brand="at"] .console .k{color:rgba(126,247,224,.7);}     /* ok/checks */
-/* stepped line-append is JS-driven (see main.js) */to{top:108%}}
+/* stepped line-append is JS-driven (see main.js) */
 
 /* ── Lockup ──────────────────────────────────────────────────────
    One centred group per channel: icon, wordmark, caption directly beneath.
