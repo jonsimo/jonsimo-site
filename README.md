@@ -92,6 +92,11 @@ The particle animations move their **inset** (`bottom`, `right`), not a percenta
 containing block, which is the tile. Everything is `animation-play-state: paused` until
 hover and removed entirely under `prefers-reduced-motion`.
 
+**These cannot be verified from a headless screenshot.** Under
+`--virtual-time-budget` no CSS animation advances — every one reads back pinned to its
+0% keyframe, which looks exactly like a broken effect. Check them in a real browser;
+a headless capture will only tell you whether the keyframes *parse*.
+
 ### Socials
 
 A **fourth row**, not a footnote — same border, ground and weight as a project channel.
