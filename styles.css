@@ -40,7 +40,7 @@
 
 /* Brand lanes. Three separable hues: bright mint / deep teal+coral / electric blue+gold. */
 [data-brand="vd"]{--c:#4ef1cc; --c-rgb:78,241,204;  --c2:#7ef7e0;  --mark-h:calc(var(--band)*1.31); --type-h:calc(var(--band)*1.29);}
-[data-brand="at"]{--c:#11cab8; --c-rgb:17,202,184;  --c2:#f7a08a;  --mark-h:calc(var(--band)*.96);  --type-h:calc(var(--band)*.82);}
+[data-brand="at"]{--c:#11cab8; --c-rgb:17,202,184;  --c2:#f7a08a;  --mark-h:calc(var(--band)*.96);  --type-h:calc(var(--band)*.82); --tile-bg:#030507;}
 [data-brand="cj"]{--c:#1986ff; --c-rgb:25,134,255;  --c2:#f7d507;  --mark-h:calc(var(--band)*1.15); --type-h:calc(var(--band)*.83);}
 
 *{box-sizing:border-box;}
@@ -105,7 +105,7 @@ body{
 /* Scanline-glitch on hover — snaps to phosphor green (same as SEE MY WORK)
    with a brief sliced-band jitter, then settles. */
 .wordmark{display:inline-block; isolation:isolate; transition:color .2s var(--ease),text-shadow .2s var(--ease);}
-.head:hover .wordmark,.wordmark:hover{
+.wordmark:hover{
   color:#4ef1cc;
   text-shadow:0 0 6px rgba(78,241,204,.55),0 0 20px rgba(78,241,204,.25);
 }
@@ -149,7 +149,7 @@ body{
   border-radius:5px;
   background:
     radial-gradient(120% 140% at 50% 120%,rgba(var(--c-rgb),.05),transparent 62%),
-    var(--bg-lift);
+    var(--tile-bg, var(--bg-lift));
   transition:border-color .35s var(--ease),background .35s var(--ease),
              transform .35s var(--ease),min-height .38s var(--ease);
 }
@@ -159,7 +159,7 @@ body{
   border-color:rgba(var(--c-rgb),.55);
   background:
     radial-gradient(120% 150% at 50% 118%,rgba(var(--c-rgb),.16),transparent 66%),
-    var(--bg-lift);
+    var(--tile-bg, var(--bg-lift));
   transform:translateY(-2px);
 }
 .tile:focus-visible{outline:2px solid rgba(var(--c-rgb),.9); outline-offset:3px;}
@@ -376,6 +376,28 @@ body{
   transition:transform .3s var(--ease),opacity .3s var(--ease);
 }
 .tile:hover .arrow,.tile:focus-visible .arrow{transform:translateX(2px); opacity:1;}
+
+
+/* Alpha Tracker — a scan sweep clipped to the neon shapes (icon + wordmark)
+   via mask-image, so it energises only the logo/text and never the bg/console. */
+[data-brand="at"] .neon{position:relative; display:inline-flex; align-items:center; line-height:0;}
+[data-brand="at"] .glint{
+  position:absolute; inset:0; pointer-events:none; opacity:0;
+  mix-blend-mode:screen; z-index:2;
+  background:linear-gradient(180deg,transparent 0%,
+    rgba(200,255,246,.55) 46%, rgba(150,255,240,.85) 50%, rgba(200,255,246,.55) 54%,
+    transparent 100%);
+  background-repeat:no-repeat; background-size:100% 30%; background-position:0 -40%;
+}
+[data-brand="at"] .n-m .glint{
+  -webkit-mask:url(assets/at-icon.webp) center/contain no-repeat;
+          mask:url(assets/at-icon.webp) center/contain no-repeat;}
+[data-brand="at"] .n-t .glint{
+  -webkit-mask:url(assets/at-wordmark.webp) center/contain no-repeat;
+          mask:url(assets/at-wordmark.webp) center/contain no-repeat;}
+[data-brand="at"]:hover .glint,[data-brand="at"]:focus-within .glint{
+  opacity:1; animation:atGlint 2.8s cubic-bezier(.45,0,.55,1) infinite;}
+@keyframes atGlint{from{background-position:0 -45%}to{background-position:0 145%}}
 
 /* ── Footer: the socials are a FOURTH ROW, not a footnote ─────────
    Same border, same ground, same bracket language as a channel. */
