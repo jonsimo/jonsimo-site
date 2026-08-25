@@ -215,4 +215,124 @@
     });
     poke();
   }
+  /* ═══ Vector Drift — ambient shooter sim ═════════════════════════
+     Runs only while the VD tile is hovered/focused, and never under
+     reduced motion. Purely decorative: no collisions, no score. */
+  (function () {
+    var tile = document.querySelector('.tile[data-brand="vd"]');
+    if (!tile) return;
+    var canvas = tile.querySelector('.sim');
+    if (!canvas || reduced) return;
+    var g = canvas.getContext('2d');
+
+    var CY = '#4ef1cc', HOT = '#eafff8', FOE = 'rgba(126,247,224,.9)';
+    var W = 0, H = 0, DPR = 1, raf = null, prev = 0;
+    var stars = [], enemies = [], bullets = [], player = {};
+
+    function size() {
+      var r = tile.getBoundingClientRect();
+      W = Math.max(1, r.width); H = Math.max(1, r.height);
+      DPR = Math.min(2, window.devicePixelRatio || 1);
+      canvas.width = Math.round(W * DPR); canvas.height = Math.round(H * DPR);
+      g.setTransform(DPR, 0, 0, DPR, 0, 0);
+    }
+
+    function mkEnemy(i) {
+      return {
+        baseX: W * (0.26 + 0.24 * i), x: 0, y: -46 - i * 52,
+        sway: Math.random() * 6, spd: 20 + Math.random() * 14,
+        fire: 1 + Math.random() * 2, s: Math.max(13, W * 0.018)
+      };
+    }
+    function reset() {
+      stars = [];
+      for (var i = 0; i < 46; i++) stars.push({ x: Math.random() * W, y: Math.random() * H, z: Math.random() * 0.8 + 0.2 });
+      enemies = [mkEnemy(0), mkEnemy(1), mkEnemy(2)];
+      bullets = [];
+      player = { x: W / 2, y: H - 24, phase: Math.random() * 6, cool: 0, s: Math.max(13, W * 0.02) };
+    }
+
+    // Delta-wing jet: nose at +y, swept wings, twin tail fins, cockpit oval.
+    var HULL = [[0,1],[0.13,0.30],[0.62,0.02],[0.30,-0.12],[0.40,-0.55],[0.14,-0.42],[0.05,-0.30]];
+    function ship(x, y, s, dir, glow) {
+      g.save();
+      g.translate(x, y); g.scale(s, s * dir);
+      g.lineJoin = 'round'; g.lineWidth = 1.7 / s;
+      g.strokeStyle = CY; g.shadowColor = CY; g.shadowBlur = glow;
+      g.beginPath();
+      g.moveTo(HULL[0][0], HULL[0][1]);
+      for (var i = 1; i < HULL.length; i++) g.lineTo(HULL[i][0], HULL[i][1]);
+      g.lineTo(0, -0.30);
+      for (var j = HULL.length - 1; j >= 1; j--) g.lineTo(-HULL[j][0], HULL[j][1]);
+      g.closePath(); g.stroke();
+      g.beginPath(); g.ellipse(0, 0.34, 0.058, 0.15, 0, 0, 6.3); g.stroke();
+      g.restore();
+    }
+
+    function frame(ts) {
+      if (!prev) prev = ts;
+      var dt = Math.min(0.05, (ts - prev) / 1000); prev = ts;
+      g.clearRect(0, 0, W, H);
+
+      // starfield
+      g.shadowBlur = 0;
+      for (var i = 0; i < stars.length; i++) {
+        var st = stars[i];
+        st.y += (34 + st.z * 110) * dt;
+        if (st.y > H) { st.y = 0; st.x = Math.random() * W; }
+        g.strokeStyle = 'rgba(120,247,224,' + (0.12 + st.z * 0.5).toFixed(3) + ')';
+        g.lineWidth = st.z * 1.4;
+        g.beginPath(); g.moveTo(st.x, st.y); g.lineTo(st.x, st.y - (2 + st.z * 11)); g.stroke();
+      }
+
+      // enemies
+      for (var e = 0; e < enemies.length; e++) {
+        var en = enemies[e];
+        en.y += en.spd * dt; en.sway += dt;
+        en.x = en.baseX + Math.sin(en.sway * 1.3) * W * 0.07;
+        if (en.y > H + 46) { en.y = -46; en.baseX = W * (0.18 + Math.random() * 0.64); }
+        ship(en.x, en.y, en.s, 1, 9);
+        en.fire -= dt;
+        if (en.fire <= 0) { en.fire = 1.4 + Math.random() * 2; bullets.push({ x: en.x, y: en.y + en.s, foe: 1 }); }
+      }
+
+      // player
+      player.phase += dt;
+      player.x = W / 2 + Math.sin(player.phase * 0.9) * W * 0.30;
+      ship(player.x, player.y, player.s, -1, 11);
+      // thruster flicker
+      g.shadowColor = CY; g.shadowBlur = 8; g.strokeStyle = 'rgba(126,247,224,.6)';
+      for (var f = 0; f < 3; f++) {
+        g.globalAlpha = 0.5 - f * 0.14;
+        g.beginPath(); g.moveTo(player.x, player.y + player.s * 0.5);
+        g.lineTo(player.x, player.y + player.s * 0.5 + 10 + f * 7 + Math.random() * 6); g.stroke();
+      }
+      g.globalAlpha = 1;
+      player.cool -= dt;
+      if (player.cool <= 0) { player.cool = 0.24; bullets.push({ x: player.x, y: player.y - player.s, foe: 0 }); }
+
+      // bullets
+      g.shadowBlur = 8;
+      for (var b = bullets.length - 1; b >= 0; b--) {
+        var bl = bullets[b];
+        bl.y += (bl.foe ? 165 : -300) * dt;
+        g.strokeStyle = bl.foe ? FOE : HOT; g.shadowColor = bl.foe ? CY : CY;
+        g.lineWidth = bl.foe ? 1.5 : 2;
+        g.beginPath(); g.moveTo(bl.x, bl.y); g.lineTo(bl.x, bl.y + (bl.foe ? 8 : -10)); g.stroke();
+        if (bl.y < -14 || bl.y > H + 14) bullets.splice(b, 1);
+      }
+
+      raf = requestAnimationFrame(frame);
+    }
+
+    function start() { if (raf) return; tile.classList.add('playing'); size(); reset(); prev = 0; raf = requestAnimationFrame(frame); }
+    function stop() { tile.classList.remove('playing'); if (raf) cancelAnimationFrame(raf); raf = null; if (g) g.clearRect(0, 0, W, H); }
+
+    tile.addEventListener('pointerenter', start);
+    tile.addEventListener('pointerleave', stop);
+    tile.addEventListener('focus', start, true);
+    tile.addEventListener('blur', stop, true);
+    window.addEventListener('resize', function () { if (raf) size(); });
+  })();
+
 })();

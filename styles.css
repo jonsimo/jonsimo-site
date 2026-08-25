@@ -204,6 +204,28 @@ body{
 [data-brand="cj"] .fx i:nth-child(11){left:87%;animation-duration:3.2s; animation-delay:1.8s; width:3px;height:3px}
 [data-brand="cj"] .fx i:nth-child(12){left:94%;animation-duration:2.4s; animation-delay:.6s}
 
+/* Vector Drift — a live vector-shooter sim behind the wordmark on hover.
+   Ambient, no scoring: descending enemy jets, a player ship strafing and
+   firing up, a scrolling starfield. Canvas is progressive enhancement; the
+   tile is fully usable without it, and it never runs under reduced-motion. */
+.sim{
+  position:absolute; inset:0; width:100%; height:100%;
+  opacity:0; pointer-events:none; z-index:0;
+  transition:opacity .5s var(--ease);
+}
+[data-brand="vd"]:hover .sim,[data-brand="vd"]:focus-within .sim,
+[data-brand="vd"].playing .sim{opacity:1;}
+/* Lockup + caption ride above the sim; a soft scrim keeps the wordmark legible
+   over the moving field without hiding the action around it. */
+[data-brand="vd"] .lock,[data-brand="vd"] .meta{position:relative; z-index:1;}
+[data-brand="vd"] .lock{isolation:isolate;}
+[data-brand="vd"]:hover .lock::before,[data-brand="vd"]:focus-within .lock::before,
+[data-brand="vd"].playing .lock::before{
+  content:""; position:absolute; inset:-30% -10%; z-index:-1;
+  background:radial-gradient(ellipse at center,rgba(5,7,10,.58),rgba(5,7,10,.28) 58%,transparent 80%);
+  filter:blur(10px);
+}
+
 /* Vector Drift — starfield streaking past, the way the shooter scrolls. */
 [data-brand="vd"] .fx i{
   position:absolute; right:0; height:2px; border-radius:2px;
@@ -491,7 +513,7 @@ body.degauss .stage{animation:degauss .9s var(--ease);}
     animation-duration:.001ms !important; animation-iteration-count:1 !important;
     transition-duration:.001ms !important;
   }
-  .crt-flick,.fx{display:none;}
+  .crt-flick,.fx,.sim{display:none;}
 
 }
 @media (prefers-contrast:more){
