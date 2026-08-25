@@ -157,6 +157,7 @@ body{
   padding:clamp(6px,1vh,14px) clamp(12px,2vw,22px);
   text-decoration:none; color:inherit;
   isolation:isolate; overflow:hidden;
+  contain:layout paint;
   min-width:0;
   border:1px solid rgba(var(--c-rgb),.22);
   border-radius:5px;
@@ -314,7 +315,7 @@ body{
 }
 /* A fixed icon column keeps every mark the same width, so their left edges —
    and therefore the whole icon stack — align down the page. */
-.mark{flex:0 0 var(--icon-w); width:var(--icon-w); max-width:none; object-fit:contain; object-position:center;}
+.mark{flex:0 0 var(--icon-w); width:var(--icon-w); max-width:none; object-fit:contain; object-position:center; will-change:width;}
 .mark,.type{
   display:block; height:auto;
   max-height:100%;
@@ -534,6 +535,7 @@ html{scroll-behavior:smooth;}
 /* ── Showcase — the next screen ──────────────────────────────────── */
 .showcase{
   position:relative; z-index:70;
+  content-visibility:auto; contain-intrinsic-size:1px 2000px;
   min-height:100svh;
   display:flex; flex-direction:column; justify-content:flex-start;
   gap:clamp(18px,3vh,36px);
@@ -636,7 +638,7 @@ html{scroll-behavior:smooth;}
 .backtop{
   align-self:center; display:inline-flex; align-items:center; gap:8px;
   text-decoration:none; color:var(--ink-faint);
-  font:400 clamp(9px,1.1vw,11px)/1 var(--mono); letter-spacing:.2em; text-transform:uppercase;
+  font:400 clamp(12px,1.6vw,16px)/1 var(--tty); letter-spacing:.08em; text-transform:uppercase;
   transition:color .3s var(--ease);
 }
 .backtop:hover,.backtop:focus-visible{color:#4ef1cc;}
@@ -706,7 +708,7 @@ html{scroll-behavior:smooth;}
 .ig-more{
   align-self:center; display:inline-flex; align-items:center; gap:9px;
   text-decoration:none; color:var(--ink-dim);
-  font:400 clamp(10px,1.3vw,13px)/1 var(--mono); letter-spacing:.2em; text-transform:uppercase;
+  font:400 clamp(13px,1.8vw,18px)/1 var(--tty); letter-spacing:.08em; text-transform:uppercase;
   padding:6px 2px; transition:color .3s var(--ease),gap .3s var(--ease);
 }
 .ig-more:hover,.ig-more:focus-visible{color:#4ef1cc; gap:14px;}
