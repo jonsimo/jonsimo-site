@@ -682,8 +682,8 @@ html{scroll-behavior:smooth;}
 }
 .ig-head span{color:#4ef1cc; opacity:.75; margin-right:.4em;}
 .ig-feed{
-  display:grid; grid-template-columns:repeat(3,1fr); gap:clamp(5px,.7vw,10px);
-  max-width:640px; margin:0 auto; width:100%;
+  display:grid; grid-template-columns:repeat(3,1fr); gap:clamp(14px,2vw,26px);
+  width:100%;
 }
 .ig-tile{
   position:relative; display:block; aspect-ratio:1; overflow:hidden;
