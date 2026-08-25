@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 
 <!-- 100% first-party. No CDNs, no analytics, no external fonts. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data: https://i.ytimg.com; font-src 'self'; connect-src 'none'; object-src 'none'; base-uri 'self'; form-action 'none'; frame-src https://www.youtube-nocookie.com https://player.vimeo.com https://www.instagram.com">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data: https://i.ytimg.com; font-src 'self'; connect-src 'none'; object-src 'none'; base-uri 'self'; form-action 'none'; frame-src https://www.youtube-nocookie.com https://player.vimeo.com">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="color-scheme" content="dark">
 <meta name="theme-color" content="#05070a">
@@ -171,25 +171,35 @@
 
     <figure class="work-card" data-accent="vd">
       <div class="media">
-        <iframe src="https://www.youtube-nocookie.com/embed/SwaBgJf08io?start=23"
-                title="Insta360 X4 — filming dolly zooms and crane shots" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen loading="lazy" referrerpolicy="strict-origin-when-cross-origin"></iframe>
+        <button class="facade" type="button"
+          data-embed="https://www.youtube-nocookie.com/embed/SwaBgJf08io?autoplay=1&amp;start=23&amp;modestbranding=1&amp;rel=0&amp;playsinline=1&amp;color=white"
+          aria-label="Play: Japan in 360">
+          <img class="poster" src="assets/work-japan.webp" alt="" width="1280" height="720" loading="lazy" decoding="async">
+          <span class="play" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11"/><path class="tri" d="M9.5 7.5 L17 12 L9.5 16.5 Z"/></svg></span>
+        </button>
       </div>
       <figcaption>Japan in 360</figcaption>
     </figure>
 
     <figure class="work-card" data-accent="cj">
-      <div class="media media-tall">
-        <iframe src="https://www.instagram.com/p/DE1Q_F2tA6o/embed"
-                title="Jon Simo on Instagram" scrolling="no" allowtransparency="true"
-                allowfullscreen loading="lazy"></iframe>
-      </div>
+      <a class="facade facade-link ig-card" href="https://www.instagram.com/p/DE1Q_F2tA6o/"
+         target="_blank" rel="noopener" aria-label="Watch on Instagram: Dancing Bugs">
+        <div class="media ig-media">
+          <span class="ig-glyph" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3.2" y="3.2" width="17.6" height="17.6" rx="5.2"/><circle cx="12" cy="12" r="4.1"/><circle class="dot" cx="17.1" cy="6.9" r="1.05"/></svg></span>
+          <span class="play" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11"/><path class="tri" d="M9.5 7.5 L17 12 L9.5 16.5 Z"/></svg></span>
+        </div>
+      </a>
       <figcaption>Dancing Bugs</figcaption>
     </figure>
 
     <figure class="work-card" data-accent="at">
       <div class="media">
-        <iframe src="https://www.youtube-nocookie.com/embed/krLpIM7ma00"
-                title="Infiniti QX60 — shot on Vancouver Island" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen loading="lazy" referrerpolicy="strict-origin-when-cross-origin"></iframe>
+        <button class="facade" type="button"
+          data-embed="https://www.youtube-nocookie.com/embed/krLpIM7ma00?autoplay=1&amp;modestbranding=1&amp;rel=0&amp;playsinline=1&amp;color=white"
+          aria-label="Play: Cinematic Car Spot">
+          <img class="poster" src="assets/work-car.webp" alt="" width="1280" height="720" loading="lazy" decoding="async">
+          <span class="play" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11"/><path class="tri" d="M9.5 7.5 L17 12 L9.5 16.5 Z"/></svg></span>
+        </button>
       </div>
       <figcaption>Cinematic Car Spot</figcaption>
     </figure>

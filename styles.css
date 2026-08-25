@@ -571,6 +571,47 @@ html{scroll-behavior:smooth;}
   position:absolute; inset:0; width:100%; height:100%; border:0;
   object-fit:cover; display:block;
 }
+/* Click-to-play facade: a dark poster + our own neon play button, so the grid
+   shows no YouTube chrome until you click. The iframe loads (autoplay) on click. */
+.facade{
+  position:absolute; inset:0; width:100%; height:100%; margin:0; padding:0;
+  border:0; background:none; cursor:pointer; display:block; color:var(--c);
+  -webkit-tap-highlight-color:transparent;
+}
+.poster{position:absolute; inset:0; width:100%; height:100%; object-fit:cover; display:block;}
+.play{
+  position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+  width:clamp(46px,6vw,66px); height:auto; color:#fff;
+  transition:transform .3s var(--ease),color .3s var(--ease),filter .3s var(--ease);
+  filter:drop-shadow(0 0 10px rgba(0,0,0,.6));
+}
+.play svg{width:100%; height:auto; display:block; fill:none;
+  stroke:currentColor; stroke-width:1.3; stroke-linejoin:round;}
+.play .tri{fill:currentColor; stroke:none;}
+.facade:hover .play,.facade:focus-visible .play{
+  transform:translate(-50%,-50%) scale(1.08);
+  color:var(--c); filter:drop-shadow(0 0 12px rgba(var(--c-rgb),.7));
+}
+.facade:focus-visible{outline:2px solid rgba(var(--c-rgb),.9); outline-offset:-2px;}
+/* the poster dims a touch so the play button reads */
+.facade::after{content:""; position:absolute; inset:0;
+  background:radial-gradient(60% 60% at 50% 50%,rgba(0,0,0,.35),rgba(0,0,0,.12));
+  transition:background .3s var(--ease);}
+.facade:hover::after{background:radial-gradient(60% 60% at 50% 50%,rgba(0,0,0,.2),transparent);}
+
+/* Instagram reel card — no clean dark embed exists, so this opens the reel.
+   Dark card with the IG glyph behind the play button. */
+.ig-media{display:flex; align-items:center; justify-content:center;
+  background:
+    radial-gradient(120% 120% at 50% 30%,rgba(var(--c-rgb),.14),transparent 62%),
+    var(--bg-lift);}
+.ig-glyph{position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+  width:44%; max-width:180px; color:rgba(var(--c-rgb),.35);}
+.ig-glyph svg{width:100%; height:auto; fill:none; stroke:currentColor; stroke-width:1;}
+.ig-glyph .dot{fill:currentColor; stroke:none;}
+.ig-card .play{color:var(--c);}
+.facade-link{text-decoration:none;}
+
 .media-ph{
   position:absolute; inset:0; display:flex; flex-direction:column;
   align-items:center; justify-content:center; gap:10px; color:var(--c);

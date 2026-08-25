@@ -325,4 +325,21 @@
     window.addEventListener('resize', function () { if (raf) size(); });
   })();
 
+  /* ═══ Showcase facades — click a poster to load the video inline ═══ */
+  $$(".facade[data-embed]").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      var src = btn.getAttribute("data-embed");
+      if (!src) return;
+      var media = btn.closest(".media");
+      var f = document.createElement("iframe");
+      f.src = src;
+      f.title = btn.getAttribute("aria-label") || "Video";
+      f.allow = "autoplay; encrypted-media; picture-in-picture; fullscreen";
+      f.setAttribute("allowfullscreen", "");
+      f.referrerPolicy = "strict-origin-when-cross-origin";
+      f.loading = "eager";
+      media.innerHTML = "";
+      media.appendChild(f);
+    });
+  });
 })();
