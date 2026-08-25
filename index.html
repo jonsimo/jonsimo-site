@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 
 <!-- 100% first-party. No CDNs, no analytics, no external fonts. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'none'; object-src 'none'; base-uri 'self'; form-action 'none'; frame-src 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data: https://i.ytimg.com; font-src 'self'; connect-src 'none'; object-src 'none'; base-uri 'self'; form-action 'none'; frame-src https://www.youtube-nocookie.com https://player.vimeo.com">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="color-scheme" content="dark">
 <meta name="theme-color" content="#05070a">
@@ -50,7 +50,7 @@
 <div class="crt-vig" aria-hidden="true"></div>
 <div class="crt-flick" aria-hidden="true"></div>
 
-<div class="stage">
+<div class="stage" id="top">
 
   <header class="head">
     <h1 class="wordmark" data-text="JON SIMO">JON SIMO</h1>
@@ -109,6 +109,14 @@
 
   </main>
 
+
+  <a class="seework" href="#work" aria-label="See my work">
+    <span class="seework-label">SEE MY WORK</span>
+    <span class="seework-arrow" aria-hidden="true">
+      <svg viewBox="0 0 24 24"><path d="M6 9 L12 15 L18 9"/></svg>
+    </span>
+  </a>
+
   <footer class="foot">
     <!-- Fourth row: same weight as a project channel, not a footnote. -->
     <nav class="socials" aria-label="Elsewhere">
@@ -141,6 +149,47 @@
     <p class="colophon"><span>&copy; <span id="yr">2026</span> Jon Simo Inc.</span></p>
   </footer>
 </div>
+
+
+<!-- ── Recent work ─────────────────────────────────────────────────────
+     Three media slots. Drop your chosen embed into each .media block:
+     a YouTube iframe (use the youtube-nocookie.com host — it's the only
+     video host the CSP allows, alongside player.vimeo.com), a Vimeo iframe,
+     or a self-hosted <video>/<img>. The placeholder shows until you do. -->
+<section id="work" class="showcase" aria-label="Recent work">
+  <h2 class="showcase-head"><span>&gt;</span> RECENT WORK</h2>
+  <div class="work-grid">
+
+    <figure class="work-card" data-accent="vd">
+      <div class="media">
+        <!-- e.g. <iframe src="https://www.youtube-nocookie.com/embed/VIDEO_ID"
+                 title="Vector Drift" allow="accelerometer; clipboard-write;
+                 encrypted-media; gyroscope; picture-in-picture" allowfullscreen
+                 loading="lazy" referrerpolicy="strict-origin-when-cross-origin"></iframe> -->
+        <span class="media-ph"><svg viewBox="0 0 24 24" aria-hidden="true"><path class="tri" d="M9 7 L17 12 L9 17 Z"/><rect x="2.5" y="3.5" width="19" height="17" rx="2.5"/></svg><em>MEDIA 01</em></span>
+      </div>
+      <figcaption>Add a caption</figcaption>
+    </figure>
+
+    <figure class="work-card" data-accent="cj">
+      <div class="media">
+        <span class="media-ph"><svg viewBox="0 0 24 24" aria-hidden="true"><path class="tri" d="M9 7 L17 12 L9 17 Z"/><rect x="2.5" y="3.5" width="19" height="17" rx="2.5"/></svg><em>MEDIA 02</em></span>
+      </div>
+      <figcaption>Add a caption</figcaption>
+    </figure>
+
+    <figure class="work-card" data-accent="at">
+      <div class="media">
+        <span class="media-ph"><svg viewBox="0 0 24 24" aria-hidden="true"><path class="tri" d="M9 7 L17 12 L9 17 Z"/><rect x="2.5" y="3.5" width="19" height="17" rx="2.5"/></svg><em>MEDIA 03</em></span>
+      </div>
+      <figcaption>Add a caption</figcaption>
+    </figure>
+
+  </div>
+  <a class="backtop" href="#top" aria-label="Back to top">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 15 L12 9 L18 15"/></svg> TOP
+  </a>
+</section>
 
 <!-- Idle screensaver -->
 <div class="saver" id="saver" hidden aria-hidden="true">
