@@ -274,11 +274,11 @@ body{
    and a 0.74:1 sprite carry the same optical weight rather than the same px. */
 [data-brand="cj"] .mark{height:var(--band); image-rendering:pixelated;}
 [data-brand="vd"] .mark{height:var(--band);}
-[data-brand="at"] .mark{height:calc(var(--band) * .70);}
+[data-brand="at"] .mark{height:calc(var(--band) * .62);}
 
 [data-brand="vd"] .type{height:calc(var(--band) * .90);}
 [data-brand="cj"] .type{height:calc(var(--band) * .72);}
-[data-brand="at"] .type{height:calc(var(--band) * .20);}
+[data-brand="at"] .type{height:calc(var(--band) * .34);}
 
 .mark,.type{
   filter:brightness(1.08) drop-shadow(0 0 9px rgba(var(--c-rgb),.16));
@@ -466,10 +466,10 @@ body.degauss .stage{animation:degauss .9s var(--ease);}
   .lock{flex-direction:column; gap:clamp(10px,2vh,16px); height:auto;}
   .mark,.type{height:auto; max-width:78%;}
   [data-brand="cj"] .mark,[data-brand="vd"] .mark{max-height:clamp(64px,14vh,104px);}
-  [data-brand="at"] .mark{max-height:clamp(52px,11vh,84px);}
+  [data-brand="at"] .mark{max-height:clamp(48px,10vh,78px);}
   [data-brand="vd"] .type{max-height:clamp(52px,12vh,88px);}
   [data-brand="cj"] .type{max-height:clamp(34px,8vh,58px);}
-  [data-brand="at"] .type{max-height:clamp(16px,3.6vh,26px); max-width:74%;}
+  [data-brand="at"] .type{max-height:clamp(24px,5.4vh,40px); max-width:86%;}
   .meta{flex-direction:column; align-items:center; gap:5px; text-align:center;}
   .colophon{gap:9px;}
   .socials{grid-template-columns:repeat(3,minmax(0,1fr)); height:auto;}
