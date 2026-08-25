@@ -224,6 +224,8 @@
     var canvas = tile.querySelector('.sim');
     if (!canvas || reduced) return;
     var g = canvas.getContext('2d');
+    var imgP = new Image(); imgP.src = 'assets/sim-player.png';
+    var imgG = new Image(); imgG.src = 'assets/sim-grunt.png';
 
     var CY = '#4ef1cc', HOT = '#eafff8', FOE = 'rgba(126,247,224,.9)';
     var W = 0, H = 0, DPR = 1, raf = null, prev = 0;
@@ -241,7 +243,7 @@
       return {
         baseX: W * (0.26 + 0.24 * i), x: 0, y: -46 - i * 52,
         sway: Math.random() * 6, spd: 20 + Math.random() * 14,
-        fire: 1 + Math.random() * 2, s: Math.max(13, W * 0.018)
+        fire: 1 + Math.random() * 2, s: Math.max(34, W * 0.058)
       };
     }
     function reset() {
@@ -249,23 +251,19 @@
       for (var i = 0; i < 46; i++) stars.push({ x: Math.random() * W, y: Math.random() * H, z: Math.random() * 0.8 + 0.2 });
       enemies = [mkEnemy(0), mkEnemy(1), mkEnemy(2)];
       bullets = [];
-      player = { x: W / 2, y: H - 24, phase: Math.random() * 6, cool: 0, s: Math.max(13, W * 0.02) };
+      player = { x: W / 2, y: H - 28, phase: Math.random() * 6, cool: 0, s: Math.max(36, W * 0.064) };
     }
 
-    // Delta-wing jet: nose at +y, swept wings, twin tail fins, cockpit oval.
-    var HULL = [[0,1],[0.13,0.30],[0.62,0.02],[0.30,-0.12],[0.40,-0.55],[0.14,-0.42],[0.05,-0.30]];
-    function ship(x, y, s, dir, glow) {
+    // Real Vector Drift sprites: the flown player ship and an axiom grunt,
+    // drawn with a neon glow. Native colours — cyan player, green grunts.
+    function sprite(img, x, y, h, glow, hue) {
+      if (!img.complete || !img.naturalWidth) return;
+      var w = h * img.naturalWidth / img.naturalHeight;
       g.save();
-      g.translate(x, y); g.scale(s, s * dir);
-      g.lineJoin = 'round'; g.lineWidth = 1.7 / s;
-      g.strokeStyle = CY; g.shadowColor = CY; g.shadowBlur = glow;
-      g.beginPath();
-      g.moveTo(HULL[0][0], HULL[0][1]);
-      for (var i = 1; i < HULL.length; i++) g.lineTo(HULL[i][0], HULL[i][1]);
-      g.lineTo(0, -0.30);
-      for (var j = HULL.length - 1; j >= 1; j--) g.lineTo(-HULL[j][0], HULL[j][1]);
-      g.closePath(); g.stroke();
-      g.beginPath(); g.ellipse(0, 0.34, 0.058, 0.15, 0, 0, 6.3); g.stroke();
+      g.shadowColor = hue; g.shadowBlur = glow;
+      g.drawImage(img, x - w / 2, y - h / 2, w, h);
+      // a second pass with no blur keeps the linework crisp over its own glow
+      g.shadowBlur = 0; g.drawImage(img, x - w / 2, y - h / 2, w, h);
       g.restore();
     }
 
@@ -291,25 +289,25 @@
         en.y += en.spd * dt; en.sway += dt;
         en.x = en.baseX + Math.sin(en.sway * 1.3) * W * 0.07;
         if (en.y > H + 46) { en.y = -46; en.baseX = W * (0.18 + Math.random() * 0.64); }
-        ship(en.x, en.y, en.s, 1, 9);
+        sprite(imgG, en.x, en.y, en.s, 9, '#33dd33');
         en.fire -= dt;
-        if (en.fire <= 0) { en.fire = 1.4 + Math.random() * 2; bullets.push({ x: en.x, y: en.y + en.s, foe: 1 }); }
+        if (en.fire <= 0) { en.fire = 1.4 + Math.random() * 2; bullets.push({ x: en.x, y: en.y + en.s * 0.4, foe: 1 }); }
       }
 
       // player
       player.phase += dt;
       player.x = W / 2 + Math.sin(player.phase * 0.9) * W * 0.30;
-      ship(player.x, player.y, player.s, -1, 11);
+      sprite(imgP, player.x, player.y, player.s, 11, CY);
       // thruster flicker
       g.shadowColor = CY; g.shadowBlur = 8; g.strokeStyle = 'rgba(126,247,224,.6)';
       for (var f = 0; f < 3; f++) {
         g.globalAlpha = 0.5 - f * 0.14;
-        g.beginPath(); g.moveTo(player.x, player.y + player.s * 0.5);
-        g.lineTo(player.x, player.y + player.s * 0.5 + 10 + f * 7 + Math.random() * 6); g.stroke();
+        g.beginPath(); g.moveTo(player.x, player.y + player.s * 0.42);
+        g.lineTo(player.x, player.y + player.s * 0.42 + 10 + f * 7 + Math.random() * 6); g.stroke();
       }
       g.globalAlpha = 1;
       player.cool -= dt;
-      if (player.cool <= 0) { player.cool = 0.24; bullets.push({ x: player.x, y: player.y - player.s, foe: 0 }); }
+      if (player.cool <= 0) { player.cool = 0.24; bullets.push({ x: player.x, y: player.y - player.s * 0.5, foe: 0 }); }
 
       // bullets
       g.shadowBlur = 8;
