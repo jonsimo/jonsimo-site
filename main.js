@@ -59,14 +59,6 @@
     setTimeout(function () { document.body.classList.remove("degauss"); }, 950);
   }
 
-  /* ═══ EGG 2 (click) — the name drops the page to phosphor green ═══ */
-  var wordmark = $(".wordmark");
-  if (wordmark) {
-    wordmark.addEventListener("click", function () {
-      document.body.classList.toggle("vectorscope");
-      degauss();
-    });
-  }
 
   /* ═══ EGG 3 (passive) — the screensaver ══════════════════════════
      A DVD-bounce, but the corner hit is the whole point, so it is not

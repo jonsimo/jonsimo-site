@@ -85,7 +85,7 @@ body{
 /* ── Header ──────────────────────────────────────────────────────── */
 .head{text-align:center;}
 .wordmark{
-  position:relative; cursor:pointer; user-select:none;
+  position:relative;
   line-height:1.5; padding-top:.15em;
   margin:0;
   font-family:var(--pixel);
@@ -460,28 +460,10 @@ body{
 }
 
 /* ── Easter egg: VECTORSCOPE MODE (konami) ───────────────────────── */
-body.vectorscope{background:#000;}
-body.vectorscope .tile{
-  --c:#33dd33; --c-rgb:51,221,51; --c2:#8bff8b;
-  background:rgba(6,16,6,.9);
-}
 /* Flatten each mark to black first, THEN tint — hue-rotating the full-colour
    art turned the wizard and the pink wordmark into muddy green blobs. Black
    collapses every hue to one value, so the result is a clean single-phosphor
    stencil instead of a mistake. */
-body.vectorscope .mark,body.vectorscope .type{
-  filter:brightness(0) saturate(100%) invert(72%) sepia(60%) saturate(700%)
-         hue-rotate(72deg) brightness(95%) contrast(95%)
-         drop-shadow(0 0 8px rgba(51,221,51,.55));
-}
-body.vectorscope [data-brand="cj"] .mark{image-rendering:pixelated;}
-body.vectorscope .wordmark,body.vectorscope .slink,body.vectorscope .desc{color:#33dd33;}
-body.vectorscope .slink{--c:#33dd33; --c-rgb:51,221,51;}
-body.vectorscope .crt-scan{opacity:.7;}
-body.vectorscope .stage{
-  filter:drop-shadow(0 0 3px rgba(51,221,51,.5));
-  animation:warp 6s ease-in-out infinite;
-}
 @keyframes warp{0%,100%{transform:perspective(1400px) rotateX(0deg)}50%{transform:perspective(1400px) rotateX(1.1deg) scale(1.004)}}
 
 /* ── Easter egg: CRT power-cycle ─────────────────────────────────── */
