@@ -538,7 +538,7 @@ html{scroll-behavior:smooth;}
 }
 .showcase-head{
   margin:0; text-align:center;
-  font-family:var(--pixel); font-size:clamp(15px,2.6vw,26px); letter-spacing:.12em;
+  font-family:var(--tty); font-size:clamp(15px,2.6vw,26px); letter-spacing:.12em;
   color:var(--ink);
   text-shadow:0 0 14px rgba(120,220,200,.18);
 }
@@ -610,6 +610,9 @@ html{scroll-behavior:smooth;}
   /* wordmark shrinks to a thin bar when collapsed, grows back on hover */
   .tile{--type-h-shown:min(var(--type-h), clamp(58px,8.6vh,94px)); --mark-h-shown:0px;
          min-height:clamp(100px,15vh,146px);}
+  /* VD wordmark carries a ship glint + two lines, so it reads smaller at the
+     shared cap — give it a taller collapsed cap to match CJ/AT optically. */
+  [data-brand="vd"]{--type-h-shown:min(var(--type-h), clamp(76px,11.5vh,124px));}
   .type{transition:height .38s var(--ease),filter .35s var(--ease),opacity .2s;}
   /* caption folds away */
   .meta{
