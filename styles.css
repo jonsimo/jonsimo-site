@@ -434,9 +434,14 @@ body.vectorscope .tile{
   --c:#33dd33; --c-rgb:51,221,51; --c2:#8bff8b;
   background:rgba(6,16,6,.9);
 }
+/* Flatten each mark to black first, THEN tint — hue-rotating the full-colour
+   art turned the wizard and the pink wordmark into muddy green blobs. Black
+   collapses every hue to one value, so the result is a clean single-phosphor
+   stencil instead of a mistake. */
 body.vectorscope .mark,body.vectorscope .type{
-  filter:grayscale(1) brightness(2.2) sepia(1) hue-rotate(58deg) saturate(6)
-         drop-shadow(0 0 10px rgba(51,221,51,.6));
+  filter:brightness(0) saturate(100%) invert(72%) sepia(60%) saturate(700%)
+         hue-rotate(72deg) brightness(95%) contrast(95%)
+         drop-shadow(0 0 8px rgba(51,221,51,.55));
 }
 body.vectorscope [data-brand="cj"] .mark{image-rendering:pixelated;}
 body.vectorscope .wordmark,body.vectorscope .slink,body.vectorscope .desc{color:#33dd33;}
