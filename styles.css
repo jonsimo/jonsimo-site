@@ -40,7 +40,7 @@
 
 /* Brand lanes. Three separable hues: bright mint / deep teal+coral / electric blue+gold. */
 [data-brand="vd"]{--c:#4ef1cc; --c-rgb:78,241,204;  --c2:#7ef7e0;  --mark-h:calc(var(--band)*1.31); --type-h:calc(var(--band)*1.29);}
-[data-brand="at"]{--c:#11cab8; --c-rgb:17,202,184;  --c2:#f7a08a;  --mark-h:calc(var(--band)*.96);  --type-h:calc(var(--band)*.82); --tile-bg:#030507;}
+[data-brand="at"]{--c:#11cab8; --c-rgb:17,202,184;  --c2:#f7a08a;  --mark-h:calc(var(--band)*.96);  --type-h:calc(var(--band)*.82); --tile-bg:#010203;}
 [data-brand="cj"]{--c:#1986ff; --c-rgb:25,134,255;  --c2:#f7d507;  --mark-h:calc(var(--band)*1.15); --type-h:calc(var(--band)*.83);}
 
 *{box-sizing:border-box;}
@@ -377,6 +377,20 @@ body{
 }
 .tile:hover .arrow,.tile:focus-visible .arrow{transform:translateX(2px); opacity:1;}
 
+
+/* Alpha Tracker box: near-black, barely lifted, with faint CRT scanlines. */
+[data-brand="at"].tile{
+  background:
+    repeating-linear-gradient(180deg, rgba(var(--c-rgb),.035) 0 1px, transparent 1px 4px),
+    radial-gradient(120% 140% at 50% 120%,rgba(var(--c-rgb),.035),transparent 62%),
+    #010203;
+}
+[data-brand="at"].tile:hover,[data-brand="at"].tile:focus-visible{
+  background:
+    repeating-linear-gradient(180deg, rgba(var(--c-rgb),.05) 0 1px, transparent 1px 4px),
+    radial-gradient(120% 150% at 50% 118%,rgba(var(--c-rgb),.10),transparent 66%),
+    #020406;
+}
 
 /* Alpha Tracker — a scan sweep clipped to the neon shapes (icon + wordmark)
    via mask-image, so it energises only the logo/text and never the bg/console. */
