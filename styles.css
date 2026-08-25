@@ -689,7 +689,7 @@ html{scroll-behavior:smooth;}
   width:100%;
 }
 .ig-tile{
-  position:relative; display:block; aspect-ratio:1; overflow:hidden;
+  position:relative; display:block; aspect-ratio:4/5; overflow:hidden;
   border-radius:3px; background:var(--bg-lift);
 }
 .ig-tile img{
