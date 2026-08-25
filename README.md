@@ -121,15 +121,15 @@ page has nothing to type into; the bare `>` makes no such promise.
 
 ### The screensaver
 
-A DVD bounce, with `SIMO` set in the DVD wordmark's own geometry. Hand-built SVG, no
-`VIDEO`, no `TM`. The proportions are measured off the real mark: letters nearly square
-(the DVD `D` is 0.97:1, not the 0.67:1 a naive geometric letter lands on), stroke ≈32%
-of cap height, letters touching, and a disc slightly **wider** than the wordmark whose
-top edge just clips the baseline. Getting those four ratios wrong is what makes a
-tribute look like clip art. Two details do most of the work: the letters must sit **in**
-the disc rather than float above it, and the `M`'s vertex must be driven all the way to
-the baseline or it reads as `I-V-I`. The `S` is a stroked two-arc path, because a blocky
-one reads as a `5`.
+A DVD bounce carrying Jon's own **SIMO** mark — `assets/simo_video.png`, cropped above
+the `VIDEO` line. It is painted through a CSS `mask` with `background: currentColor`
+rather than dropped in as an `<img>`, so it still recolours on every bounce. Only the
+alpha matters for a mask, so it is stored as gray+alpha (27 KB).
+
+This replaced a hand-drawn SVG imitation, after three rounds of redrawing never got
+there. The real mark's `M` drives its vertex clean through the disc to the centre hole,
+and its letters are *drawn* — they are not constructible from strokes and arcs at any
+weight. If the actual artwork exists, use the actual artwork.
 
 The corner hit is the entire reason anyone watches one of these, so it is not left to
 chance. On ~38% of wall bounces the logo genuinely **aims at a corner** — a straight
@@ -149,12 +149,12 @@ the logo across the screen on return.
 ## Files
 
 ```
-index.html    markup; the SIMO screensaver mark is inlined SVG
+index.html    markup
 styles.css    all styling; brand lanes are custom props on [data-brand] / [data-net]
 main.js       typed line, tilt, easter eggs. Page is fully usable without it.
 CNAME         jonsimo.com
-assets/       the five project marks (WebP, luminance-keyed), PressStart2P subset
-              (1.9 KB, printable ASCII), icons, OG image
+assets/       the five project marks (WebP, luminance-keyed), the SIMO mask,
+              PressStart2P subset (1.9 KB, printable ASCII), icons, OG image
 ```
 
 ## Notes

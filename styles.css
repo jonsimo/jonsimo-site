@@ -415,15 +415,20 @@ body{
 /* ── Idle screensaver ──────────────────────────────────────────── */
 .saver{position:fixed; inset:0; z-index:90; background:#000; cursor:none;}
 .saver[hidden]{display:none;}
+/* Jon's own SIMO/DVD mark, painted through a CSS mask rather than dropped in
+   as an <img>, so `background: currentColor` still colour-cycles on every bounce. */
 .saver-mark{
   position:absolute; top:0; left:0;
-  width:clamp(190px,21vw,320px);
+  width:clamp(200px,22vw,340px);
+  aspect-ratio:909 / 420;
   color:#4ef1cc;
+  background:currentColor;
+  -webkit-mask:url("assets/simo-mark.png") center / contain no-repeat;
+          mask:url("assets/simo-mark.png") center / contain no-repeat;
   will-change:transform;
-  filter:drop-shadow(0 0 9px currentColor);
+  filter:drop-shadow(0 0 10px currentColor);
   transition:color .25s linear;
 }
-.saver-mark svg{width:100%; height:auto; display:block;}
 /* The corner hit — the entire reason anyone watches this. */
 .saver-mark.corner{animation:cornerHit 1.4s var(--ease);}
 @keyframes cornerHit{
