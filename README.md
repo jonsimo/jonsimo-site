@@ -26,7 +26,7 @@ The projects' **real** logos, cut from source art:
 | --- | --- |
 | `vd-wordmark` | the in-game main-menu framegrab |
 | `vd-icon` | `vector_drift_icon.png` |
-| `at-icon` | `alpha_tracker_icon_v2.png` |
+| `at-icon` | `alpha_tracker_controller_icon_web.png` — ships pre-keyed, so it only needs an alpha lift |
 | `at-wordmark` | `vector_drift_installer_win_bg.png` — the filename lies, it is the Alpha Tracker lockup |
 | `cj-wordmark` | `CODEX_TITLE_LOGO_v2.png` |
 | `cj-wizard` | `wizard_base_high_res.png`, point-filtered so the pixel edges stay hard |
@@ -53,24 +53,31 @@ magick keyed.png -crop "$BB" +repage ...     # then crop
 `-trim` associates the alpha and premultiplies the RGB, which crushes a
 luminance-keyed neon mark to black. Ask how I know.
 
-The two neon icons carry a faint reference grid in the source. Brightness alone will
-not remove it — the rules that cross the mark's bloom are as bright as the mark — so the
-alpha mask is opened morphologically (`-morphology Open Disk:2.5`), which deletes
-anything thinner than the structuring element while leaving the fat strokes intact.
+`vd-icon` carries a faint reference grid in its source. Brightness alone will not remove
+it — the rules that cross the mark's bloom are as bright as the mark — so its alpha mask
+is opened morphologically (`-morphology Open Disk:2.5`), which deletes anything thinner
+than the structuring element. Watch the result: pushed too far, the open eats real
+detail (it took a bite out of the Alpha Tracker controller's grip before that mark was
+replaced with a pre-keyed source).
 
 ### Lockup
 
-A fixed-width **two-column grid**, not a centred flex row. Centring each lockup
-independently would put every icon at a different x, because the wordmarks are different
-widths; a shared grid puts all three icons in one column down the page, and the caption
-starts where the wordmark starts.
+Icon and wordmark are centred as **one unit**, and the wordmark is never smaller than
+its icon. The lockup is given every pixel of tile height the page can spare: tile
+padding is minimal, and the caption is absolutely positioned and revealed on hover, so
+it costs the logos no height at all.
 
-The row is `minmax(0,1fr)`, not `auto` — an auto row sizes to its content, so
-`max-height:100%` on the images would have no definite height to resolve against and
-they would overflow the band. On narrow screens the grid collapses to a centred stack
-and each mark is capped by `max-height` with `height:auto`; those caps must be written
-per-brand, because the desktop rules they override are `[data-brand=...]` scoped and a
-media query adds no specificity.
+Three bars in one viewport is a hard ceiling — each bar gets roughly a third of the
+screen, and since the wordmarks are wide (Alpha Tracker's is 8.5:1) they are *height*-
+limited. Squeezing the chrome buys about 2×; genuinely tripling them would require
+scrolling sections, which was considered and rejected.
+
+The band height is a `vh` clamp rather than `height:100%`. A percentage height needs a
+definite parent to resolve against; without one the images fall back to intrinsic size
+and blow through the tile. On narrow screens the lockup stacks and each mark is capped
+by `max-height` with `height:auto` — those caps must be written per-brand, because the
+desktop rules they override are `[data-brand=...]` scoped and a media query adds no
+specificity.
 
 ### Hover
 
@@ -119,8 +126,10 @@ A DVD bounce, with `SIMO` set in the DVD wordmark's own geometry. Hand-built SVG
 (the DVD `D` is 0.97:1, not the 0.67:1 a naive geometric letter lands on), stroke ≈32%
 of cap height, letters touching, and a disc slightly **wider** than the wordmark whose
 top edge just clips the baseline. Getting those four ratios wrong is what makes a
-tribute look like clip art. The `S` is a stroked two-arc path because a blocky one reads
-as a `5`.
+tribute look like clip art. Two details do most of the work: the letters must sit **in**
+the disc rather than float above it, and the `M`'s vertex must be driven all the way to
+the baseline or it reads as `I-V-I`. The `S` is a stroked two-arc path, because a blocky
+one reads as a `5`.
 
 The corner hit is the entire reason anyone watches one of these, so it is not left to
 chance. On ~38% of wall bounces the logo genuinely **aims at a corner** — a straight

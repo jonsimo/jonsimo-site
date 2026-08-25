@@ -75,8 +75,8 @@ body{
   position:relative; z-index:1;
   min-height:100svh;
   display:flex; flex-direction:column;
-  gap:clamp(14px,2.4vh,30px);
-  padding:clamp(20px,3.4vh,40px) clamp(18px,5vw,64px) clamp(16px,2.6vh,32px);
+  gap:clamp(9px,1.5vh,18px);
+  padding:clamp(12px,2vh,24px) clamp(14px,4vw,48px) clamp(10px,1.6vh,20px);
   max-width:1180px; margin:0 auto; width:100%;
 }
 
@@ -86,7 +86,7 @@ body{
   position:relative; cursor:pointer; user-select:none;
   margin:0;
   font-family:var(--pixel);
-  font-size:clamp(17px,3.4vw,32px);
+  font-size:clamp(15px,2.8vw,26px);
   letter-spacing:.10em;
   color:var(--ink);
   text-shadow:0 0 2px rgba(207,233,226,.55),0 0 14px rgba(120,220,200,.22);
@@ -103,7 +103,7 @@ body{
 @keyframes bootIn{from{opacity:0;transform:translateY(-6px) scaleY(.6);filter:blur(3px)}to{opacity:1;transform:none;filter:none}}
 
 .tagline{
-  margin:clamp(8px,1.4vh,14px) 0 0;
+  margin:clamp(5px,.9vh,10px) 0 0;
   font-size:clamp(10px,1.5vw,12.5px);
   letter-spacing:.14em; text-transform:uppercase;
   color:var(--ink-dim);
@@ -123,7 +123,7 @@ body{
   display:grid;
   grid-template-columns:minmax(0,1fr);
   grid-template-rows:repeat(3,minmax(0,1fr));
-  gap:clamp(10px,1.6vh,18px);
+  gap:clamp(7px,1.1vh,12px);
   min-height:0;
 }
 
@@ -131,8 +131,8 @@ body{
   position:relative;
   display:flex; flex-direction:column;
   align-items:center; justify-content:center;
-  gap:clamp(5px,.9vh,10px);
-  padding:clamp(8px,1.2vh,14px) clamp(16px,3vw,34px);
+  gap:0;
+  padding:clamp(5px,.7vh,9px) clamp(12px,2vw,22px);
   text-decoration:none; color:inherit;
   isolation:isolate; overflow:hidden;
   min-width:0;
@@ -252,12 +252,12 @@ body{
    wordmarks are different widths; a shared grid puts all three icons in one
    column down the page. */
 .lock{
-  width:min(680px,94%); margin-inline:auto;
-  display:grid;
-  grid-template-columns:clamp(74px,9.5vw,128px) 1fr;
-  grid-template-rows:minmax(0,1fr);
-  align-items:center; gap:clamp(16px,3vw,38px);
-  height:clamp(60px,15vh,150px);
+  /* Icon + wordmark are centred as ONE unit, so the pair reads as a single
+     lockup rather than two things parked in fixed columns. */
+  max-width:96%; margin-inline:auto;
+  display:flex; align-items:center; justify-content:center;
+  gap:clamp(16px,2.6vw,38px);
+  height:clamp(72px,23vh,230px);
   min-width:0;
 }
 
@@ -272,8 +272,8 @@ body{
   object-fit:contain;
   transition:filter .35s var(--ease),transform .35s var(--ease);
 }
-.mark{grid-column:1; justify-self:center; min-height:0;}
-.type{grid-column:2; justify-self:start;  min-height:0;}
+.mark{flex:0 0 auto; min-height:0; min-width:0;}
+.type{flex:0 1 auto; min-height:0; min-width:0;}
 [data-brand="vd"] .type,
 [data-brand="at"] .type,
 [data-brand="at"] .mark{
@@ -295,14 +295,14 @@ body{
 /* Per-brand proportions inside the shared lockup band. */
 /* Icons share one optical size; wordmarks are capped so no one channel
    shouts louder than the others. */
-[data-brand="vd"] .mark{max-height:100%;}
-[data-brand="at"] .mark{max-height:82%;}
-[data-brand="cj"] .mark{max-height:100%; image-rendering:pixelated;
+[data-brand="vd"] .mark{max-height:88%;}
+[data-brand="at"] .mark{max-height:74%;}
+[data-brand="cj"] .mark{max-height:92%; image-rendering:pixelated;
   filter:drop-shadow(0 0 10px rgba(var(--c-rgb),.34));}
 
-[data-brand="vd"] .type{max-height:86%;  max-width:min(100%,420px);}
-[data-brand="at"] .type{max-height:32%;  max-width:min(100%,430px);}
-[data-brand="cj"] .type{max-height:70%;  max-width:min(100%,400px);
+[data-brand="vd"] .type{max-height:100%; max-width:min(100%,760px);}
+[data-brand="at"] .type{max-height:52%;  max-width:min(100%,780px);}
+[data-brand="cj"] .type{max-height:88%;  max-width:min(100%,720px);
   filter:drop-shadow(0 0 14px rgba(255,111,200,.28));}
 [data-brand="cj"]:hover .mark,[data-brand="cj"]:focus-visible .mark{
   transform:translateY(-3px);
@@ -320,15 +320,18 @@ body{
 
 /* Meta line */
 .meta{
-  /* Sits on the same grid as the lockup so the caption starts where the
-     wordmark starts, instead of floating centred over the icon column. */
-  width:min(680px,94%); margin-inline:auto;
-  padding-left:calc(clamp(74px,9.5vw,128px) + clamp(16px,3vw,38px));
-  display:flex; align-items:baseline; justify-content:flex-start;
+  /* Absolutely positioned so it costs the lockup no height at all — the
+     logos get the whole tile, and the caption fades in on hover. */
+  position:absolute; left:0; right:0; bottom:clamp(5px,.9vh,10px);
+  width:100%; padding:0 clamp(12px,2vw,22px);
+  opacity:0; transform:translateY(3px);
+  transition:opacity .3s var(--ease),transform .3s var(--ease);
+  display:flex; align-items:baseline; justify-content:center;
   gap:clamp(8px,1.6vw,16px); flex-wrap:wrap;
   font-size:clamp(9.5px,1.25vw,11.5px);
   letter-spacing:.15em; text-transform:uppercase;
 }
+.tile:hover .meta,.tile:focus-visible .meta{opacity:1; transform:none;}
 .desc{color:var(--ink-dim); transition:color .3s var(--ease);}
 .tile:hover .desc,.tile:focus-visible .desc{color:var(--ink);}
 .url{color:var(--ink-faint); transition:color .3s var(--ease); white-space:nowrap;}
@@ -348,7 +351,7 @@ body{
   display:grid;
   grid-template-columns:repeat(5,minmax(0,1fr));
   gap:clamp(8px,1.2vw,14px);
-  height:clamp(78px,11.5vh,116px);
+  height:clamp(64px,9vh,94px);
 }
 [data-net="ig"]  {--c:#ff6fc8; --c-rgb:255,111,200;}
 [data-net="yt"]  {--c:#ff4d4d; --c-rgb:255,77,77;}
@@ -414,10 +417,10 @@ body{
 .saver[hidden]{display:none;}
 .saver-mark{
   position:absolute; top:0; left:0;
-  width:clamp(150px,17vw,240px);
+  width:clamp(190px,21vw,320px);
   color:#4ef1cc;
   will-change:transform;
-  filter:drop-shadow(0 0 14px currentColor);
+  filter:drop-shadow(0 0 9px currentColor);
   transition:color .25s linear;
 }
 .saver-mark svg{width:100%; height:auto; display:block;}
@@ -468,10 +471,10 @@ body.degauss .stage{animation:degauss .9s var(--ease);}
   /* Stacked, so the band no longer sets the size — each mark is capped by
      max-height with height:auto, which keeps its aspect ratio intact. */
   .lock{
-    width:100%; grid-template-columns:minmax(0,1fr);
-    grid-template-rows:none; gap:10px; height:auto; justify-items:center;
+    max-width:100%; flex-direction:column;
+    gap:10px; height:auto;
   }
-  .mark,.type{grid-column:1; justify-self:center; max-width:82%;}
+  .mark,.type{max-width:82%;}
   /* Per-brand selectors, because the desktop rules they override are
      [data-brand=...] scoped and a media query adds no specificity. */
   [data-brand="cj"] .mark{max-height:clamp(58px,13vh,96px);}
@@ -480,7 +483,8 @@ body.degauss .stage{animation:degauss .9s var(--ease);}
   [data-brand="vd"] .type{max-height:clamp(52px,12vh,90px); max-width:min(72vw,320px);}
   [data-brand="at"] .type{max-height:clamp(18px,4.2vh,30px); max-width:min(72vw,300px);}
   [data-brand="cj"] .type{max-height:clamp(32px,7.5vh,54px);}
-  .meta{width:100%; padding-left:0; flex-direction:column;
+  .meta{position:static; opacity:1; transform:none;
+    width:100%; padding-left:0; flex-direction:column;
     align-items:center; gap:5px; text-align:center;}
   .colophon{gap:9px;}
   .socials{grid-template-columns:repeat(3,minmax(0,1fr)); height:auto;}
