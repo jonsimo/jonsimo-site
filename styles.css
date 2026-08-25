@@ -112,17 +112,17 @@ body{
 /* a bright scan line sweeps the letters, screen-blended so it energises the
    dots as it passes rather than cutting them out */
 .wordmark::after{
-  content:""; position:absolute; left:-3%; right:-3%; height:26%; top:-30%;
+  content:""; position:absolute; left:-3%; right:-3%; height:46%; top:-46%;
   pointer-events:none; opacity:0;
   background:linear-gradient(180deg,transparent,
-    rgba(120,247,224,.14) 42%, rgba(220,255,250,.36) 50%,
-    rgba(120,247,224,.14) 58%, transparent);
-  mix-blend-mode:color-dodge; filter:blur(.6px);
+    rgba(120,247,224,.10) 34%, rgba(200,255,246,.30) 50%,
+    rgba(120,247,224,.10) 66%, transparent);
+  mix-blend-mode:color-dodge; filter:blur(1.6px);
 }
 .head:hover .wordmark::after,.wordmark:hover::after{
-  opacity:1; animation:nameScan .7s cubic-bezier(.4,0,.6,1);
+  opacity:1; animation:nameScan 2.1s cubic-bezier(.45,0,.55,1);
 }
-@keyframes nameScan{from{top:-30%}to{top:106%}}
+@keyframes nameScan{from{top:-46%}to{top:108%}}
 @keyframes bootIn{from{opacity:0;transform:translateY(-6px) scaleY(.6);filter:blur(3px)}to{opacity:1;transform:none;filter:none}}
 
 .tagline{
@@ -286,15 +286,15 @@ body{
   mix-blend-mode:color-dodge;
 }
 [data-brand="at"] .fx b{
-  position:absolute; left:0; right:0; height:20%; top:-20%;
+  position:absolute; left:0; right:0; height:36%; top:-36%;
   background:linear-gradient(180deg,
-    transparent 0%, rgba(var(--c-rgb),.18) 42%,
-    rgba(210,255,248,.42) 50%, rgba(var(--c-rgb),.18) 58%, transparent 100%);
-  filter:blur(.7px);
-  animation:scanbar 2.6s cubic-bezier(.42,0,.58,1) infinite paused;
+    transparent 0%, rgba(var(--c-rgb),.12) 34%,
+    rgba(160,255,240,.30) 50%, rgba(var(--c-rgb),.12) 66%, transparent 100%);
+  filter:blur(2.4px);
+  animation:scanbar 7.8s cubic-bezier(.45,0,.55,1) infinite paused;
 }
 [data-brand="at"]:hover .fx b,[data-brand="at"]:focus-visible .fx b{animation-play-state:running;}
-@keyframes scanbar{from{top:-20%}to{top:106%}}
+@keyframes scanbar{from{top:-36%}to{top:108%}}
 
 /* ── Lockup ──────────────────────────────────────────────────────
    One centred group per channel: icon, wordmark, caption directly beneath.
