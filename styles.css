@@ -144,18 +144,21 @@ body{
   text-decoration:none; color:inherit;
   isolation:isolate; overflow:hidden;
   min-width:0;
-  border:1px solid transparent;
-  border-radius:4px;
-  background:transparent;
-  transition:border-color .35s var(--ease),background .35s var(--ease),transform .35s var(--ease);
+  border:1px solid rgba(var(--c-rgb),.22);
+  border-radius:5px;
+  background:
+    radial-gradient(120% 140% at 50% 120%,rgba(var(--c-rgb),.05),transparent 62%),
+    var(--bg-lift);
+  transition:border-color .35s var(--ease),background .35s var(--ease),
+             transform .35s var(--ease),min-height .38s var(--ease);
 }
 /* Everything that used to be permanent chrome is now the hover state, so the
    resting page is just three logos on black. */
 .tile:hover,.tile:focus-visible{
-  border-color:rgba(var(--c-rgb),.28);
+  border-color:rgba(var(--c-rgb),.55);
   background:
-    radial-gradient(120% 150% at 50% 118%,rgba(var(--c-rgb),.10),transparent 66%),
-    rgba(255,255,255,.012);
+    radial-gradient(120% 150% at 50% 118%,rgba(var(--c-rgb),.16),transparent 66%),
+    var(--bg-lift);
   transform:translateY(-2px);
 }
 .tile:focus-visible{outline:2px solid rgba(var(--c-rgb),.9); outline-offset:3px;}
@@ -584,7 +587,8 @@ html{scroll-behavior:smooth;}
                opacity .3s var(--ease),filter .35s var(--ease);
   }
   /* wordmark shrinks to a thin bar when collapsed, grows back on hover */
-  .tile{--type-h-shown:min(var(--type-h), clamp(40px,6.5vh,68px)); --mark-h-shown:0px;}
+  .tile{--type-h-shown:min(var(--type-h), clamp(46px,7vh,76px)); --mark-h-shown:0px;
+         min-height:clamp(84px,13vh,124px);}
   .type{transition:height .38s var(--ease),filter .35s var(--ease),opacity .2s;}
   /* caption folds away */
   .meta{
@@ -594,7 +598,8 @@ html{scroll-behavior:smooth;}
   .tile:hover .mark,.tile:focus-within .mark{
     width:var(--icon-w); margin-inline-end:var(--lock-gap); opacity:1;
   }
-  .tile:hover,.tile:focus-within{--type-h-shown:var(--type-h); --mark-h-shown:var(--mark-h);}
+  .tile:hover,.tile:focus-within{--type-h-shown:var(--type-h); --mark-h-shown:var(--mark-h);
+         min-height:clamp(150px,24vh,220px);}
   .tile:hover .meta,.tile:focus-within .meta{max-height:5em; opacity:1;}
 }
 
