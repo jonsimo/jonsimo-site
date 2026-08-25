@@ -76,7 +76,7 @@ body{
 .stage{
   position:relative; z-index:1;
   min-height:100svh;
-  display:flex; flex-direction:column;
+  display:flex; flex-direction:column; justify-content:center;
   gap:clamp(9px,1.5vh,18px);
   padding:clamp(12px,2vh,24px) clamp(14px,4vw,48px) clamp(10px,1.6vh,20px);
   max-width:940px; margin:0 auto; width:100%;
@@ -122,11 +122,10 @@ body{
 
 /* ── Channels ────────────────────────────────────────────────────── */
 .channels{
-  flex:1;
   display:grid;
   grid-template-columns:minmax(0,1fr);
-  grid-template-rows:repeat(3,minmax(0,1fr));
-  gap:clamp(12px,2.4vh,30px);
+  grid-auto-rows:auto;
+  gap:clamp(6px,1.2vh,16px);
   min-height:0;
 }
 
@@ -278,11 +277,10 @@ body{
    padding still baked in, Alpha Tracker's wordmark carried 35px of dead
    space above and 2px below and sat visibly low. */
 .lock{
-  display:flex; align-items:center; justify-content:flex-start;
+  display:flex; align-items:center; justify-content:center;
   gap:var(--lock-gap);
-  width:min(var(--lock-w),94%); margin-inline:auto;
-  height:auto;                 /* hug the marks, so the caption sits a
-                                  consistent distance below the ink */
+  width:auto; max-width:100%; margin-inline:auto;
+  height:auto;
   min-width:0;
 }
 /* A fixed icon column keeps every mark the same width, so their left edges —
@@ -345,9 +343,7 @@ body{
 /* Caption sits in the flow directly under the lockup, so the channel reads as
    one block instead of a logo with a label pinned to the floor. */
 .meta{
-  display:flex; align-items:baseline; justify-content:flex-start;
-  width:min(var(--lock-w),94%); margin-inline:auto;
-  padding-left:calc(var(--icon-w) + var(--lock-gap));
+  display:flex; align-items:baseline; justify-content:center;
   gap:clamp(8px,1.4vw,15px); flex-wrap:wrap;
   font-size:clamp(9px,1.1vw,10.5px);
   letter-spacing:.2em; text-transform:uppercase;
@@ -566,6 +562,32 @@ html{scroll-behavior:smooth;}
 }
 .backtop:hover,.backtop:focus-visible{color:#4ef1cc;}
 .backtop svg{width:1.4em; height:1.4em; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round;}
+
+/* ── Collapsed channels ──────────────────────────────────────────
+   Default state shows only the wordmark, so all three fit compactly and
+   the socials + SEE MY WORK bar stay in view. Hovering a channel expands
+   it — the icon slides in, the caption drops open, and the flicker + bg
+   glow fire. Only where a real pointer can hover; touch devices get the
+   full, always-open lockup. */
+@media (hover:hover) and (pointer:fine){
+  .tile{padding:clamp(4px,.7vh,9px) clamp(12px,2vw,22px);}
+  .lock{gap:0;}
+  /* icon collapses to nothing, then slides open on hover */
+  .mark{
+    width:0; margin-inline-end:0; opacity:0;
+    transition:width .38s var(--ease),margin .38s var(--ease),
+               opacity .3s var(--ease),filter .35s var(--ease);
+  }
+  /* caption folds away */
+  .meta{
+    max-height:0; opacity:0; overflow:hidden;
+    transition:max-height .42s var(--ease),opacity .3s var(--ease);
+  }
+  .tile:hover .mark,.tile:focus-within .mark{
+    width:var(--icon-w); margin-inline-end:var(--lock-gap); opacity:1;
+  }
+  .tile:hover .meta,.tile:focus-within .meta{max-height:5em; opacity:1;}
+}
 
 /* ── Responsive ──────────────────────────────────────────────────── */
 @media (max-width:720px){
