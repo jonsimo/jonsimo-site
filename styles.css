@@ -242,6 +242,7 @@ body{
 /* Lockup + caption ride above the sim; a soft scrim keeps the wordmark legible
    over the moving field without hiding the action around it. */
 [data-brand="vd"] .lock,[data-brand="vd"] .meta{position:relative; z-index:1;}
+[data-brand="at"] .lock,[data-brand="at"] .meta{position:relative; z-index:1;}
 [data-brand="vd"] .lock{isolation:isolate;}
 [data-brand="vd"]:hover .lock::before,[data-brand="vd"]:focus-within .lock::before,
 [data-brand="vd"].playing .lock::before{
@@ -280,21 +281,26 @@ body{
 [data-brand="vd"] .fx i:nth-child(14){top:4%; width:42px; animation-duration:1.92s; animation-delay:1.7s}
 
 /* Alpha Tracker — a readout being scanned: fixed rules plus a travelling bar. */
+/* Alpha Tracker — a dim, fast dev-console streaming behind the mark, like a
+   boot log. Sits under the gamepad + wordmark; only runs while the tile is open. */
 [data-brand="at"] .fx{
-  /* color-dodge is invisible over the black ground but FLASHES the neon
-     as the band crosses it — a real refresh sweep, not a grey bar. */
-  mix-blend-mode:color-dodge;
+  overflow:hidden;
+  -webkit-mask-image:linear-gradient(180deg,transparent,#000 18%,#000 82%,transparent);
+          mask-image:linear-gradient(180deg,transparent,#000 18%,#000 82%,transparent);
 }
-[data-brand="at"] .fx b{
-  position:absolute; left:0; right:0; height:36%; top:-36%;
-  background:linear-gradient(180deg,
-    transparent 0%, rgba(var(--c-rgb),.12) 34%,
-    rgba(160,255,240,.30) 50%, rgba(var(--c-rgb),.12) 66%, transparent 100%);
-  filter:blur(2.4px);
-  animation:scanbar 7.8s cubic-bezier(.45,0,.55,1) infinite paused;
+[data-brand="at"] .console{
+  position:absolute; left:6%; right:6%; top:0;
+  font:400 clamp(8px,1vw,11px)/1.55 var(--mono);
+  color:rgba(var(--c-rgb),.30); white-space:pre; letter-spacing:.02em;
+  text-shadow:0 0 6px rgba(var(--c-rgb),.25);
+  will-change:transform;
 }
-[data-brand="at"]:hover .fx b,[data-brand="at"]:focus-visible .fx b{animation-play-state:running;}
-@keyframes scanbar{from{top:-36%}to{top:108%}}
+[data-brand="at"] .console .c{color:rgba(var(--c-rgb),.62);}   /* commands brighter */
+[data-brand="at"] .console .k{color:rgba(126,247,224,.7);}     /* ok/checks */
+[data-brand="at"]:hover .console,[data-brand="at"]:focus-within .console{
+  animation:consoleScroll 5.5s linear infinite;
+}
+@keyframes consoleScroll{from{transform:translateY(0)}to{transform:translateY(-50%)}}to{top:108%}}
 
 /* ── Lockup ──────────────────────────────────────────────────────
    One centred group per channel: icon, wordmark, caption directly beneath.

@@ -342,4 +342,44 @@
       media.appendChild(f);
     });
   });
+  /* ═══ Alpha Tracker console — fill the streaming boot log ═══════════ */
+  (function () {
+    var el = document.querySelector('[data-brand="at"] .console');
+    if (!el) return;
+    var LINES = [
+      ['c', '$ at sync --project vector-drift'],
+      ['', '  pulling board · 142 tasks · 6 sprints'],
+      ['k', '  ✓ indexed 142 tasks in 0.4s'],
+      ['c', '$ at status'],
+      ['', '  in-progress 18  ·  review 5  ·  done 119'],
+      ['', '  [build] compiling shaders  ] 87%'],
+      ['k', '  ✓ milestone "boss: broodmother" on track'],
+      ['c', '$ git commit -m "wire pods + jaw rig"'],
+      ['', '  4 files changed, 213 insertions(+)'],
+      ['c', '$ at deploy --env staging'],
+      ['', '  packaging build 0.9.14 ...'],
+      ['', '  uploading  ] 100%  4.2 MB/s'],
+      ['k', '  ✓ deployed to staging in 11.3s'],
+      ['c', '$ at test --suite feel'],
+      ['', '  running 64 checks ...'],
+      ['k', '  ✓ 64 passed  ·  0 failed'],
+      ['', '  [audio] normalizing 12 cues'],
+      ['c', '$ at burndown --sprint 6'],
+      ['', '  velocity 41 pts  ·  eta 3d'],
+      ['k', '  ✓ no blockers detected'],
+      ['c', '$ at watch --changes'],
+      ['', '  fs event  boss_broodmother.svg'],
+      ['', '  rebuild  ] tracing 388 segments'],
+      ['k', '  ✓ sprite hot-reloaded']
+    ];
+    function render(list) {
+      return list.map(function (r) {
+        var cls = r[0] ? ' class="' + r[0] + '"' : '';
+        var t = r[1].replace(/&/g, '&amp;').replace(/</g, '&lt;');
+        return '<span' + cls + '>' + t + '</span>';
+      }).join('\n');
+    }
+    // duplicate the block so a -50% translate loops seamlessly
+    el.innerHTML = render(LINES) + '\n' + render(LINES);
+  })();
 })();
