@@ -84,7 +84,7 @@ body{
   min-height:100svh;
   display:flex; flex-direction:column; justify-content:center;
   gap:clamp(9px,1.5vh,18px);
-  padding:clamp(12px,2vh,24px) clamp(14px,4vw,48px) clamp(10px,1.6vh,20px);
+  padding:clamp(4px,1vh,12px) clamp(14px,4vw,48px) clamp(10px,1.6vh,20px);
   max-width:940px; margin:0 auto; width:100%;
 }
 
@@ -92,8 +92,8 @@ body{
 .head{text-align:center;}
 .wordmark{
   position:relative;
-  line-height:1.5; padding-top:.15em;
-  margin:0;
+  line-height:1.05;
+  margin:0; cursor:default; user-select:none;
   font-family:var(--tty);
   font-size:clamp(32px,6.2vw,60px);
   letter-spacing:.04em;
@@ -102,13 +102,24 @@ body{
   animation:bootIn .9s var(--ease) both;
 }
 /* Chromatic split — the same RGB-fringe trick the VD terminal uses. */
-.wordmark::before,.wordmark::after{
-  content:attr(data-text); position:absolute; inset:0;
-  pointer-events:none; opacity:0; transition:opacity .25s;
+/* Scanline-glitch on hover — snaps to phosphor green (same as SEE MY WORK)
+   with a brief sliced-band jitter, then settles. */
+.wordmark{transition:color .18s var(--ease),text-shadow .18s var(--ease);}
+.head:hover .wordmark,.wordmark:hover{
+  color:#4ef1cc;
+  text-shadow:0 0 6px rgba(78,241,204,.55),0 0 20px rgba(78,241,204,.25);
+  animation:nameGlitch .5s steps(1,end);
 }
-.wordmark::before{color:#ff3d7f; transform:translateX(-1.5px);}
-.wordmark::after {color:#4ef1cc; transform:translateX(1.5px);}
-.head:hover .wordmark::before,.head:hover .wordmark::after{opacity:.55;}
+@keyframes nameGlitch{
+  0%  {clip-path:inset(0 0 0 0);      transform:translate(0)}
+  12% {clip-path:inset(0 0 62% 0);    transform:translate(-3px,0)}
+  20% {clip-path:inset(58% 0 0 0);    transform:translate(3px,0)}
+  30% {clip-path:inset(30% 0 30% 0);  transform:translate(-2px,0)}
+  40% {clip-path:inset(0 0 78% 0);    transform:translate(2px,0)}
+  52% {clip-path:inset(72% 0 0 0);    transform:translate(-1px,0)}
+  64% {clip-path:inset(0 0 0 0);      transform:translate(1px,0)}
+  100%{clip-path:inset(0 0 0 0);      transform:translate(0)}
+}
 @keyframes bootIn{from{opacity:0;transform:translateY(-6px) scaleY(.6);filter:blur(3px)}to{opacity:1;transform:none;filter:none}}
 
 .tagline{
@@ -390,8 +401,8 @@ body{
   position:relative; overflow:hidden; min-width:0;
   display:flex; flex-direction:column;
   align-items:center; justify-content:center;
-  gap:clamp(3px,.6vh,6px);
-  padding:clamp(4px,1vh,10px) 0;
+  gap:clamp(3px,.5vh,5px);
+  padding:clamp(3px,.8vh,8px) 0;
   text-decoration:none; color:var(--ink-dim);
   border:1px solid transparent; border-radius:3px;
   background:transparent;
@@ -414,15 +425,20 @@ body{
 .slink:hover .sglow,.slink:focus-visible .sglow{opacity:1;}
 
 .slink svg{
-  width:clamp(58px,8.6vw,92px); height:auto; display:block;
+  width:clamp(49px,7.3vw,78px); height:auto; display:block;   /* 15% smaller */
   fill:none; stroke:currentColor; stroke-width:1.1;
   stroke-linecap:round; stroke-linejoin:round;
-  transition:transform .32s cubic-bezier(.34,1.56,.64,1),filter .3s var(--ease);
+  transition:transform .3s var(--ease),filter .3s var(--ease);
 }
 .slink svg .dot,.slink svg .fill{fill:currentColor; stroke:none;}
 .slink:hover svg,.slink:focus-visible svg{
-  transform:translateY(-3px) scale(1.16);
+  transform:translateY(-3px);
   filter:drop-shadow(0 0 7px rgba(var(--c-rgb),.75));
+  animation:socPower .5s steps(1,end);
+}
+@keyframes socPower{
+  0%{opacity:.45} 14%{opacity:1} 28%{opacity:.4} 42%{opacity:1}
+  58%{opacity:.72} 74%{opacity:1} 100%{opacity:1}
 }
 
 .slabel{
