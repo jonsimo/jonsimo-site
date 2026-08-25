@@ -342,61 +342,68 @@
       media.appendChild(f);
     });
   });
-  /* ═══ Alpha Tracker console — grows DOWN from empty, then scrolls UP ═══
-     On hover: lines are written in one at a time, filling downward. Once the
-     stack reaches the bottom of the box it starts scrolling up — new line in
-     at the bottom, oldest drops off the top — and keeps looping the command
-     list in that same ever-growing style for as long as you hover. */
+  /* ═══ Alpha Tracker console — free-flowing boot log ═══════════════
+     In the spirit of the vectordrift.io boot console: a typed command, then
+     a burst of fast machine output, then a hold — not a uniform crawl. Each
+     line carries its own "wait before the next" so the rhythm breathes.
+     Grows down from empty, then scrolls up, looping while hovered. */
   (function () {
     var tile = document.querySelector('.tile[data-brand="at"]');
     var fx = tile && tile.querySelector('.fx');
     var el = fx && fx.querySelector('.console');
     if (!el) return;
+    // [class, text, ms-before-next-line]
     var LINES = [
-      ['c', '$ at sync --project vector-drift'],
-      ['', '  pulling board · 142 tasks · 6 sprints'],
-      ['k', '  ✓ indexed 142 tasks in 0.4s'],
-      ['c', '$ at status'],
-      ['', '  in-progress 18  ·  review 5  ·  done 119'],
-      ['', '  [build] compiling shaders  ] 87%'],
-      ['k', '  ✓ milestone "boss: broodmother" on track'],
-      ['c', '$ git commit -m "wire pods + jaw rig"'],
-      ['', '  4 files changed, 213 insertions(+)'],
-      ['c', '$ at deploy --env staging'],
-      ['', '  packaging build 0.9.14 ...'],
-      ['', '  uploading  ] 100%  4.2 MB/s'],
-      ['k', '  ✓ deployed to staging in 11.3s'],
-      ['c', '$ at test --suite feel'],
-      ['', '  running 64 checks ...'],
-      ['k', '  ✓ 64 passed  ·  0 failed'],
-      ['', '  [audio] normalizing 12 cues'],
-      ['c', '$ at burndown --sprint 6'],
-      ['', '  velocity 41 pts  ·  eta 3d'],
-      ['k', '  ✓ no blockers detected'],
-      ['c', '$ at watch --changes'],
-      ['', '  fs event  boss_broodmother.svg'],
-      ['', '  rebuild  ] tracing 388 segments'],
-      ['k', '  ✓ sprite hot-reloaded']
+      ['c', '$ at boot --cold', 300],
+      ['',  '  VD-DEV RELAY 2.13 · 8192K TRACK RAM', 60],
+      ['',  '  resolving board topology ...', 70],
+      ['k', '  ✓ 6 sprints · 142 tasks linked', 620],
+      ['c', '$ at sync --project vector-drift', 220],
+      ['',  '  pulling deltas ...', 60],
+      ['',  '  · boss/broodmother   +3', 45],
+      ['',  '  · fx/vector-burst    +7', 45],
+      ['',  '  · audio/cues         +2', 45],
+      ['k', '  ✓ merged · tree clean', 700],
+      ['c', '$ at build --target staging', 240],
+      ['',  '  [compile] shaders  ] 41%', 42],
+      ['',  '  [compile] shaders  ] 78%', 42],
+      ['',  '  [compile] shaders  ] 100%', 55],
+      ['',  '  [pack] build 0.9.14', 55],
+      ['',  '  [upload] 4.2 MB/s  ] 100%', 60],
+      ['k', '  ✓ deployed in 11.3s', 760],
+      ['c', '$ at status', 260],
+      ['',  '  in-progress 18 · review 5 · done 119', 500],
+      ['c', '$ at test --suite feel', 220],
+      ['',  '  running 64 checks ...', 70],
+      ['k', '  ✓ 64 passed · 0 failed', 640],
+      ['c', '$ git commit -m "wire pods + jaw rig"', 220],
+      ['',  '  4 files changed, 213 insertions(+)', 520],
+      ['c', '$ at watch --changes', 300],
+      ['',  '  fs event  boss_broodmother.svg', 55],
+      ['',  '  rebuild ] tracing 388 segments', 55],
+      ['k', '  ✓ sprite hot-reloaded', 900]
     ];
-    function mkLine(i) {
-      var r = LINES[i % LINES.length];
+    function mkLine(idx) {
+      var r = LINES[idx % LINES.length];
       var s = document.createElement('span');
       if (r[0]) s.className = r[0];
       s.textContent = r[1];
       return s;
     }
-    var ptr = 0, running = false, timer = null;
-    var STEP = 105;                       // ms between lines
+    var ptr = 0, running = false, timer = null, pending = 0;
 
-    function next() { if (running) timer = setTimeout(tick, STEP); }
-
+    function schedule(d) {
+      if (!running) return;
+      timer = setTimeout(tick, d * (0.82 + Math.random() * 0.36));   // jitter
+    }
     function tick() {
       if (!running) return;
-      var line = mkLine(ptr++);
-      el.appendChild(line);                       // write next line at the bottom
-      // still room? keep growing downward.
-      if (el.offsetHeight <= fx.clientHeight) { next(); return; }
-      // full: slide the whole stack up by one line, then drop the top line.
+      var idx = ptr++;
+      var delay = LINES[idx % LINES.length][2] || 120;
+      var line = mkLine(idx);
+      el.appendChild(line);
+      if (el.offsetHeight <= fx.clientHeight) { schedule(delay); return; }
+      pending = delay;                              // scroll up one line, then wait
       var lh = line.offsetHeight || 16;
       el.style.transition = 'none';
       el.style.transform = 'translateY(0)';
@@ -411,23 +418,22 @@
       el.style.transition = 'none';
       if (el.firstChild) el.removeChild(el.firstChild);
       el.style.transform = 'translateY(0)';
-      next();
+      schedule(pending);
     }
-
     function start() {
       if (running) return;
       running = true;
-      el.innerHTML = '';                          // begin empty, grow from the top
+      el.innerHTML = '';
       el.style.transition = 'none';
       el.style.transform = 'translateY(0)';
       ptr = 0;
-      if (reduced) {                              // no motion: just fill it once
+      if (reduced) {
         for (var i = 0; el.offsetHeight <= fx.clientHeight && i < LINES.length * 2; i++)
           el.appendChild(mkLine(ptr++));
         return;
       }
       el.addEventListener('transitionend', onEnd);
-      timer = setTimeout(tick, 90);
+      timer = setTimeout(tick, 160);
     }
     function stop() {
       running = false;
