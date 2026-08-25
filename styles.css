@@ -82,9 +82,9 @@ body{
 .stage{
   position:relative; z-index:1;
   min-height:100svh;
-  display:flex; flex-direction:column; justify-content:center;
+  display:flex; flex-direction:column; justify-content:flex-start;
   gap:clamp(9px,1.5vh,18px);
-  padding:clamp(4px,1vh,12px) clamp(14px,4vw,48px) clamp(10px,1.6vh,20px);
+  padding:clamp(18px,3.4vh,44px) clamp(14px,4vw,48px) clamp(10px,1.6vh,20px);
   max-width:940px; margin:0 auto; width:100%;
 }
 
@@ -603,8 +603,8 @@ html{scroll-behavior:smooth;}
                opacity .3s var(--ease),filter .35s var(--ease);
   }
   /* wordmark shrinks to a thin bar when collapsed, grows back on hover */
-  .tile{--type-h-shown:min(var(--type-h), clamp(46px,7vh,76px)); --mark-h-shown:0px;
-         min-height:clamp(84px,13vh,124px);}
+  .tile{--type-h-shown:min(var(--type-h), clamp(58px,8.6vh,94px)); --mark-h-shown:0px;
+         min-height:clamp(100px,15vh,146px);}
   .type{transition:height .38s var(--ease),filter .35s var(--ease),opacity .2s;}
   /* caption folds away */
   .meta{
