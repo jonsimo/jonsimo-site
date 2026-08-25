@@ -1,9 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-label="Jon Simo">
-  <rect width="32" height="32" rx="7" fill="#05070a"/>
-  <!-- The S from the SIMO screensaver mark: two arcs, flat terminals, sheared.
-       A blocky S reads as a 5, and at 16px there is no room to argue about it. -->
-  <g transform="translate(4.4,0.8) skewX(-14) scale(0.94)">
-    <path d="M23.6,8.8 A7.6,4.8 0 1 0 16,17.4 A7.6,4.8 0 1 1 8.4,26"
-          fill="none" stroke="#4ef1cc" stroke-width="8"/>
-  </g>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" shape-rendering="crispEdges" role="img" aria-label="Jon Simo">
+  <rect width="32" height="32" rx="6" fill="#05070a"/>
+  <path fill="#12463c" d="M2,2h6v2h-6ZM2,2h2v6h-2ZM24,2h6v2h-6ZM28,2h2v6h-2ZM2,28h6v2h-6ZM2,24h2v6h-2ZM24,28h6v2h-6ZM28,24h2v6h-2Z"/>
+  <path fill="#4ef1cc" d="M7,9h8v2h-8ZM11,11h2v2h-2ZM11,13h2v2h-2ZM11,15h2v2h-2ZM5,17h2v2h-2ZM11,17h2v2h-2ZM5,19h2v2h-2ZM11,19h2v2h-2ZM7,21h4v2h-4ZM19,9h8v2h-8ZM17,11h2v2h-2ZM17,13h2v2h-2ZM19,15h6v2h-6ZM25,17h2v2h-2ZM25,19h2v2h-2ZM17,21h8v2h-8Z"/>
 </svg>

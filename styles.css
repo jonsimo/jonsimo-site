@@ -108,15 +108,14 @@ body{
   letter-spacing:.14em; text-transform:uppercase;
   color:var(--ink-dim);
 }
-.tagline .prefix{color:#4ef1cc; opacity:.8; margin-right:.5em;}
-.cursor{
-  display:inline-block; width:.62em; height:1.05em;
-  margin-left:.18em; vertical-align:-.15em;
-  background:#4ef1cc; border:0; padding:0; cursor:pointer;
-  box-shadow:0 0 6px rgba(78,241,204,.6);
-  animation:blink 1.05s steps(1) infinite;
+.prefix{
+  font:inherit; color:#4ef1cc; opacity:.85;
+  background:none; border:0; padding:0 .5em 0 0; margin:0;
+  cursor:pointer; line-height:inherit;
+  transition:opacity .25s var(--ease),text-shadow .25s var(--ease);
 }
-@keyframes blink{0%,49%{opacity:1}50%,100%{opacity:0}}
+.prefix:hover,.prefix:focus-visible{opacity:1; text-shadow:0 0 8px rgba(78,241,204,.8);}
+.prefix:focus-visible{outline:2px solid rgba(78,241,204,.8); outline-offset:2px; border-radius:2px;}
 
 /* ── Channels ────────────────────────────────────────────────────── */
 .channels{
@@ -170,40 +169,96 @@ body{
 .tile:hover .brackets i:nth-child(3),.tile:focus-visible .brackets i:nth-child(3){bottom:5px;left:5px;}
 .tile:hover .brackets i:nth-child(4),.tile:focus-visible .brackets i:nth-child(4){bottom:5px;right:5px;}
 
-/* Scanline sweep travels the tile once per hover. */
-.sweep{
-  position:absolute; left:0; right:0; height:36%;
-  top:-40%; pointer-events:none; opacity:0;
-  background:linear-gradient(180deg,transparent,rgba(var(--c-rgb),.10) 45%,rgba(var(--c-rgb),.22) 50%,rgba(var(--c-rgb),.10) 55%,transparent);
-}
-.tile:hover .sweep,.tile:focus-visible .sweep{opacity:1; animation:sweep 1.15s var(--ease);}
-@keyframes sweep{from{top:-40%}to{top:110%}}
+/* ── Per-brand hover effects ──────────────────────────────────────
+   Each channel gets the effect its own product would have: sparks off the
+   wizard, a starfield warp for the shooter, a scanning readout for the
+   tracker. All CSS, all paused until hover, all off under reduced-motion. */
+.fx{position:absolute; inset:0; pointer-events:none; overflow:hidden; opacity:0;
+    transition:opacity .3s var(--ease);}
+.tile:hover .fx,.tile:focus-visible .fx{opacity:1;}
 
-/* Lockup: mark + wordmark. */
+/* Codex Jr — wizard sparks drifting up off the mark. */
+[data-brand="cj"] .fx i{
+  position:absolute; width:4px; height:4px; bottom:0; border-radius:1px;
+  background:var(--c2); box-shadow:0 0 10px var(--c2),0 0 3px #fff;
+  opacity:0; animation:spark 2.4s linear infinite paused;
+}
+[data-brand="cj"]:hover .fx i,[data-brand="cj"]:focus-visible .fx i{animation-play-state:running;}
+@keyframes spark{
+  0%{opacity:0; bottom:-2%;  transform:scale(.5)}
+  14%{opacity:1}
+  72%{opacity:.85}
+  100%{opacity:0; bottom:102%; transform:scale(.25)}
+}
+[data-brand="cj"] .fx i:nth-child(1){left:6%;  animation-duration:2.6s; animation-delay:0s}
+[data-brand="cj"] .fx i:nth-child(2){left:13%; animation-duration:3.1s; animation-delay:.5s; background:#ff6fc8; box-shadow:0 0 6px #ff6fc8}
+[data-brand="cj"] .fx i:nth-child(3){left:21%; animation-duration:2.2s; animation-delay:1.1s}
+[data-brand="cj"] .fx i:nth-child(4){left:29%; animation-duration:2.9s; animation-delay:.3s; width:3px;height:3px}
+[data-brand="cj"] .fx i:nth-child(5){left:37%; animation-duration:3.4s; animation-delay:1.6s; background:#4ef1cc; box-shadow:0 0 6px #4ef1cc}
+[data-brand="cj"] .fx i:nth-child(6){left:45%; animation-duration:2.5s; animation-delay:.8s}
+[data-brand="cj"] .fx i:nth-child(7){left:54%; animation-duration:3.0s; animation-delay:2.0s; background:#ff6fc8; box-shadow:0 0 6px #ff6fc8}
+[data-brand="cj"] .fx i:nth-child(8){left:62%; animation-duration:2.3s; animation-delay:.2s; width:4px;height:4px}
+[data-brand="cj"] .fx i:nth-child(9){left:70%; animation-duration:3.3s; animation-delay:1.3s}
+[data-brand="cj"] .fx i:nth-child(10){left:78%;animation-duration:2.7s; animation-delay:.9s; background:#4ef1cc; box-shadow:0 0 6px #4ef1cc}
+[data-brand="cj"] .fx i:nth-child(11){left:87%;animation-duration:3.2s; animation-delay:1.8s; width:3px;height:3px}
+[data-brand="cj"] .fx i:nth-child(12){left:94%;animation-duration:2.4s; animation-delay:.6s}
+
+/* Vector Drift — starfield streaking past, the way the shooter scrolls. */
+[data-brand="vd"] .fx i{
+  position:absolute; right:0; height:3px; border-radius:2px;
+  background:linear-gradient(90deg,transparent,var(--c) 70%,#fff);
+  box-shadow:0 0 10px rgba(var(--c-rgb),.75);
+  opacity:0; animation:warp 2.6s linear infinite paused;
+}
+[data-brand="vd"]:hover .fx i,[data-brand="vd"]:focus-visible .fx i{animation-play-state:running;}
+@keyframes warp{
+  0%{opacity:0;  right:-18%}
+  10%{opacity:1}
+  88%{opacity:.6}
+  100%{opacity:0; right:112%}
+}
+[data-brand="vd"] .fx i:nth-child(1){top:9%;  width:34px; animation-duration:2.85s; animation-delay:0s}
+[data-brand="vd"] .fx i:nth-child(2){top:16%; width:16px; animation-duration:4.37s; animation-delay:.7s}
+[data-brand="vd"] .fx i:nth-child(3){top:23%; width:52px; animation-duration:2.28s; animation-delay:1.4s}
+[data-brand="vd"] .fx i:nth-child(4){top:31%; width:22px; animation-duration:3.8s; animation-delay:.4s}
+[data-brand="vd"] .fx i:nth-child(5){top:38%; width:40px; animation-duration:3.23s; animation-delay:1.9s}
+[data-brand="vd"] .fx i:nth-child(6){top:45%; width:12px; animation-duration:4.94s; animation-delay:.2s}
+[data-brand="vd"] .fx i:nth-child(7){top:52%; width:60px; animation-duration:2.09s; animation-delay:1.1s}
+[data-brand="vd"] .fx i:nth-child(8){top:59%; width:26px; animation-duration:3.99s; animation-delay:.9s}
+[data-brand="vd"] .fx i:nth-child(9){top:66%; width:44px; animation-duration:2.66s; animation-delay:1.6s}
+[data-brand="vd"] .fx i:nth-child(10){top:73%;width:18px; animation-duration:4.56s; animation-delay:.5s}
+[data-brand="vd"] .fx i:nth-child(11){top:80%;width:36px; animation-duration:3.04s; animation-delay:2.1s}
+[data-brand="vd"] .fx i:nth-child(12){top:87%;width:28px; animation-duration:3.61s; animation-delay:.3s}
+[data-brand="vd"] .fx i:nth-child(13){top:93%;width:50px; animation-duration:2.47s; animation-delay:1.3s}
+[data-brand="vd"] .fx i:nth-child(14){top:4%; width:20px; animation-duration:4.18s; animation-delay:1.7s}
+
+/* Alpha Tracker — a readout being scanned: fixed rules plus a travelling bar. */
+[data-brand="at"] .fx{
+  background:repeating-linear-gradient(180deg,
+    rgba(var(--c-rgb),.10) 0 1px, transparent 1px 4px);
+}
+[data-brand="at"] .fx b{
+  position:absolute; left:0; right:0; height:26%; top:-30%;
+  background:linear-gradient(180deg,transparent,rgba(var(--c-rgb),.22) 48%,
+             rgba(var(--c-rgb),.42) 50%,rgba(var(--c-rgb),.22) 52%,transparent);
+  animation:scanbar 2.2s linear infinite paused;
+}
+[data-brand="at"]:hover .fx b,[data-brand="at"]:focus-visible .fx b{animation-play-state:running;}
+@keyframes scanbar{from{top:-30%}to{top:104%}}
+
+/* ── Lockup ──────────────────────────────────────────────────────
+   A fixed-width two-column grid, not a centred flex row. Centring each
+   lockup independently would put every icon at a different x, because the
+   wordmarks are different widths; a shared grid puts all three icons in one
+   column down the page. */
 .lock{
-  display:flex; align-items:center; justify-content:center;
-  gap:clamp(12px,2.4vw,28px);
-  width:100%; min-width:0;
+  width:min(680px,94%); margin-inline:auto;
+  display:grid;
+  grid-template-columns:clamp(74px,9.5vw,128px) 1fr;
+  grid-template-rows:minmax(0,1fr);
+  align-items:center; gap:clamp(16px,3vw,38px);
   height:clamp(60px,15vh,150px);
-}
-/* Marks are sized by HEIGHT, never width — a 2.5:1 wordmark and a square
-   pixel sprite only read as siblings if they share a baseline band. */
-
-.name{
-  font-family:var(--pixel);
-  font-size:clamp(13px,2.5vw,25px);
-  letter-spacing:.06em;
-  color:var(--c);
-  text-shadow:0 0 2px rgba(var(--c-rgb),.5),0 0 16px rgba(var(--c-rgb),.22);
-  transition:text-shadow .35s var(--ease);
-}
-.tile:hover .name,.tile:focus-visible .name{
-  text-shadow:0 0 2px rgba(var(--c-rgb),.9),0 0 12px rgba(var(--c-rgb),.55),0 0 34px rgba(var(--c-rgb),.28);
-}
-/* Vector Drift's logo IS its wordmark — keep the text for screen readers only. */
-[data-brand="vd"] .name{
-  position:absolute; width:1px; height:1px; overflow:hidden;
-  clip-path:inset(50%); white-space:nowrap;
+  min-width:0;
 }
 
 /* ── Marks ────────────────────────────────────────────────────────
@@ -212,10 +267,13 @@ body{
    is derived from luminance at build time (see README) — the glow fades
    out instead of ending at a crop rectangle, and no blend mode is needed. */
 .mark,.type{
-  display:block; width:auto; max-width:100%;
-  height:100%; object-fit:contain;
-  transition:filter .35s var(--ease);
+  display:block; width:auto; height:auto;
+  max-width:100%; max-height:100%;
+  object-fit:contain;
+  transition:filter .35s var(--ease),transform .35s var(--ease);
 }
+.mark{grid-column:1; justify-self:center; min-height:0;}
+.type{grid-column:2; justify-self:start;  min-height:0;}
 [data-brand="vd"] .type,
 [data-brand="at"] .type,
 [data-brand="at"] .mark{
@@ -235,24 +293,24 @@ body{
 }
 
 /* Per-brand proportions inside the shared lockup band. */
-[data-brand="vd"] .type{height:114%;}
-[data-brand="at"] .mark{height:96%;}
-[data-brand="at"] .type{height:26%;}
-[data-brand="cj"] .type{height:58%; filter:drop-shadow(0 0 14px rgba(255,111,200,.28));}
-[data-brand="cj"] .mark{
-  height:100%;
-  image-rendering:pixelated;
-  filter:drop-shadow(0 0 10px rgba(var(--c-rgb),.32));
-}
-/* Codex Jr's wizard is pixel art — a stepped bob, never a smooth vector redraw. */
+/* Icons share one optical size; wordmarks are capped so no one channel
+   shouts louder than the others. */
+[data-brand="vd"] .mark{max-height:100%;}
+[data-brand="at"] .mark{max-height:82%;}
+[data-brand="cj"] .mark{max-height:100%; image-rendering:pixelated;
+  filter:drop-shadow(0 0 10px rgba(var(--c-rgb),.34));}
+
+[data-brand="vd"] .type{max-height:86%;  max-width:min(100%,420px);}
+[data-brand="at"] .type{max-height:32%;  max-width:min(100%,430px);}
+[data-brand="cj"] .type{max-height:70%;  max-width:min(100%,400px);
+  filter:drop-shadow(0 0 14px rgba(255,111,200,.28));}
 [data-brand="cj"]:hover .mark,[data-brand="cj"]:focus-visible .mark{
-  animation:bob .5s steps(2,end) infinite;
-  filter:drop-shadow(0 0 5px rgba(247,213,7,.5)) drop-shadow(0 0 20px rgba(var(--c-rgb),.5));
+  transform:translateY(-3px);
+  filter:drop-shadow(0 0 5px rgba(247,213,7,.55)) drop-shadow(0 0 22px rgba(var(--c-rgb),.55));
 }
 [data-brand="cj"]:hover .type,[data-brand="cj"]:focus-visible .type{
   filter:brightness(1.12) drop-shadow(0 0 18px rgba(255,111,200,.55));
 }
-@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
 
 /* The wordmarks ARE the names — keep the text for screen readers only. */
 .name{
@@ -262,7 +320,11 @@ body{
 
 /* Meta line */
 .meta{
-  display:flex; align-items:baseline; justify-content:center;
+  /* Sits on the same grid as the lockup so the caption starts where the
+     wordmark starts, instead of floating centred over the icon column. */
+  width:min(680px,94%); margin-inline:auto;
+  padding-left:calc(clamp(74px,9.5vw,128px) + clamp(16px,3vw,38px));
+  display:flex; align-items:baseline; justify-content:flex-start;
   gap:clamp(8px,1.6vw,16px); flex-wrap:wrap;
   font-size:clamp(9.5px,1.25vw,11.5px);
   letter-spacing:.15em; text-transform:uppercase;
@@ -405,14 +467,21 @@ body.degauss .stage{animation:degauss .9s var(--ease);}
   .channels{grid-template-rows:none; grid-auto-rows:minmax(140px,auto); min-height:0;}
   /* Stacked, so the band no longer sets the size — each mark is capped by
      max-height with height:auto, which keeps its aspect ratio intact. */
-  .lock{flex-direction:column; gap:10px; height:auto;}
-  .mark,.type{height:auto; width:auto; max-width:82%;}
-  .mark{max-height:clamp(58px,13vh,96px);}
-  .type{max-height:clamp(30px,7vh,52px);}
-  [data-brand="vd"] .type{max-height:clamp(58px,14vh,104px); max-width:min(74vw,340px);}
+  .lock{
+    width:100%; grid-template-columns:minmax(0,1fr);
+    grid-template-rows:none; gap:10px; height:auto; justify-items:center;
+  }
+  .mark,.type{grid-column:1; justify-self:center; max-width:82%;}
+  /* Per-brand selectors, because the desktop rules they override are
+     [data-brand=...] scoped and a media query adds no specificity. */
+  [data-brand="cj"] .mark{max-height:clamp(58px,13vh,96px);}
+  [data-brand="vd"] .mark{max-height:clamp(58px,13vh,96px);}
+  [data-brand="at"] .mark{max-height:clamp(48px,11vh,80px);}
+  [data-brand="vd"] .type{max-height:clamp(52px,12vh,90px); max-width:min(72vw,320px);}
   [data-brand="at"] .type{max-height:clamp(18px,4.2vh,30px); max-width:min(72vw,300px);}
   [data-brand="cj"] .type{max-height:clamp(32px,7.5vh,54px);}
-  .meta{flex-direction:column; gap:5px; text-align:center;}
+  .meta{width:100%; padding-left:0; flex-direction:column;
+    align-items:center; gap:5px; text-align:center;}
   .colophon{gap:9px;}
   .socials{grid-template-columns:repeat(3,minmax(0,1fr)); height:auto;}
   .slink{aspect-ratio:1/.72; }
@@ -428,8 +497,8 @@ body.degauss .stage{animation:degauss .9s var(--ease);}
     animation-duration:.001ms !important; animation-iteration-count:1 !important;
     transition-duration:.001ms !important;
   }
-  .crt-flick{display:none;}
-  .cursor{animation:none; opacity:1;}
+  .crt-flick,.fx{display:none;}
+
 }
 @media (prefers-contrast:more){
   :root{--ink-dim:rgba(207,233,226,.75); --ink-faint:rgba(207,233,226,.5); --line:rgba(207,233,226,.3);}

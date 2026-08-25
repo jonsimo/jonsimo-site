@@ -45,9 +45,11 @@
     });
   }
 
-  /* ═══ EGG 1 (click) — the blinking cursor power-cycles the tube ═══ */
-  var cursorEl = $("#cursor");
-  if (cursorEl) cursorEl.addEventListener("click", degauss);
+  /* ═══ EGG 1 (click) — the prompt glyph power-cycles the tube ═══════
+     This used to be a blinking block cursor, which read as a text field
+     you could type into. The bare ">" makes no such promise. */
+  var prefixEl = $("#prefix");
+  if (prefixEl) prefixEl.addEventListener("click", degauss);
 
   function degauss() {
     if (reduced) return;

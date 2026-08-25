@@ -55,8 +55,8 @@
   <header class="head">
     <h1 class="wordmark" data-text="JON SIMO">JON SIMO</h1>
     <p class="tagline">
-      <span class="prefix">&gt;</span>
-      <span class="typed" id="typed"></span><button class="cursor" id="cursor" type="button" aria-label="Terminal cursor"></button>
+      <button class="prefix" id="prefix" type="button" aria-label="Power-cycle the display">&gt;</button>
+      <span class="typed" id="typed"></span>
     </p>
   </header>
 
@@ -65,7 +65,7 @@
     <!-- ── CODEX JR ─────────────────────────────────────────── -->
     <a class="tile" data-brand="cj" href="https://codexjr.com" data-key="cj">
       <span class="brackets" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
-      <span class="sweep" aria-hidden="true"></span>
+      <span class="fx" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span>
       <span class="lock">
         <img class="mark" src="assets/cj-wizard.webp" alt="" width="267" height="360" decoding="async">
         <img class="type" src="assets/cj-wordmark.webp" alt="" width="820" height="300" decoding="async">
@@ -80,9 +80,10 @@
     <!-- ── VECTOR DRIFT ─────────────────────────────────────── -->
     <a class="tile" data-brand="vd" href="https://vectordrift.io" data-key="vd">
       <span class="brackets" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
-      <span class="sweep" aria-hidden="true"></span>
+      <span class="fx" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span>
       <span class="lock">
-        <img class="type" src="assets/vd-wordmark.webp" alt="" width="849" height="420" decoding="async">
+        <img class="mark" src="assets/vd-icon.webp" alt="" width="338" height="420" decoding="async">
+        <img class="type" src="assets/vd-wordmark.webp" alt="" width="848" height="420" decoding="async">
       </span>
       <span class="name">VECTOR DRIFT</span>
       <span class="meta">
@@ -94,9 +95,9 @@
     <!-- ── ALPHA TRACKER ────────────────────────────────────── -->
     <a class="tile" data-brand="at" href="https://alpha.vectordrift.io" data-key="at">
       <span class="brackets" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
-      <span class="sweep" aria-hidden="true"></span>
+      <span class="fx" aria-hidden="true"><b></b></span>
       <span class="lock">
-        <img class="mark" src="assets/at-icon.webp" alt="" width="678" height="420" decoding="async">
+        <img class="mark" src="assets/at-icon.webp" alt="" width="703" height="420" decoding="async">
         <img class="type" src="assets/at-wordmark.webp" alt="" width="1026" height="150" decoding="async">
       </span>
       <span class="name">ALPHA TRACKER</span>
@@ -144,23 +145,19 @@
 <!-- Idle screensaver -->
 <div class="saver" id="saver" hidden aria-hidden="true">
   <div class="saver-mark" id="saver-mark">
-    <svg viewBox="0 0 300 126" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="SIMO">
-     <defs>
-      <mask id="ss-o"><rect x="204" y="0" width="64" height="92" fill="#fff"/>
-       <ellipse cx="236" cy="45" rx="10" ry="19" fill="#000"/></mask>
-      <mask id="ss-d"><rect x="18" y="80" width="264" height="44" fill="#fff"/>
-       <ellipse cx="150" cy="101" rx="27" ry="6" fill="#000"/></mask>
-     </defs>
-     <g transform="translate(13,0) skewX(-14)">
-      <path d="M92,20 A22,14 0 1 0 70,45 A22,14 0 1 1 48,70"
-            fill="none" stroke="currentColor" stroke-width="20"/>
-      <g fill="currentColor">
-       <path d="M110,6 H130 V84 H110 Z
-                M138,6 H158 V84 H138 Z  M182,6 H202 V84 H182 Z
-                M158,6 L172,50 L186,6 L186,30 L176,58 L168,58 L158,30 Z"/>
-       <ellipse cx="236" cy="45" rx="26" ry="39" mask="url(#ss-o)"/>
-       <ellipse cx="150" cy="101" rx="124" ry="17" mask="url(#ss-d)"/>
+    <svg viewBox="0 0 300 124" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="SIMO">
+     <defs><mask id="ss-disc">
+      <rect x="8" y="78" width="284" height="46" fill="#fff"/>
+      <ellipse cx="150" cy="103" rx="30" ry="5.7" fill="#000"/>
+     </mask></defs>
+     <g transform="translate(12,0) skewX(-13)">
+      <g fill="none" stroke="currentColor" stroke-width="25" stroke-linecap="butt" stroke-linejoin="round">
+       <path d="M83.75,20 A24.75,14 0 1 0 59,45 A24.75,14 0 1 1 34.25,70"/>
+       <path d="M108,18.5 V71.5"/>
+       <path d="M137.5,71.5 L137.5,18.5 L163,55 L188.5,18.5 L188.5,71.5"/>
+       <ellipse cx="241" cy="45" rx="23.5" ry="26.5"/>
       </g>
+      <ellipse cx="150" cy="103" rx="127.5" ry="18.5" fill="currentColor" mask="url(#ss-disc)"/>
      </g>
     </svg>
   </div>
