@@ -301,12 +301,12 @@ body{
 
 /* Marks are sized against the band, tuned per aspect ratio so a 11:1 wordmark
    and a 0.74:1 sprite carry the same optical weight rather than the same px. */
-[data-brand="cj"] .mark{height:var(--band); image-rendering:pixelated;}
-[data-brand="vd"] .mark{height:calc(var(--band) * 1.14);}
+[data-brand="cj"] .mark{height:calc(var(--band) * 1.15); image-rendering:pixelated;}
+[data-brand="vd"] .mark{height:calc(var(--band) * 1.31);}
 [data-brand="at"] .mark{height:calc(var(--band) * .96);}
 
-[data-brand="vd"] .type{height:calc(var(--band) * 1.12);}
-[data-brand="cj"] .type{height:calc(var(--band) * .72);}
+[data-brand="vd"] .type{height:calc(var(--band) * 1.29);}
+[data-brand="cj"] .type{height:calc(var(--band) * .83);}
 [data-brand="at"] .type{height:calc(var(--band) * .82);}
 
 .mark,.type{

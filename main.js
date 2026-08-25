@@ -289,7 +289,7 @@
         en.y += en.spd * dt; en.sway += dt;
         en.x = en.baseX + Math.sin(en.sway * 1.3) * W * 0.07;
         if (en.y > H + 46) { en.y = -46; en.baseX = W * (0.18 + Math.random() * 0.64); }
-        sprite(imgG, en.x, en.y, en.s, 9, '#33dd33');
+        sprite(imgG, en.x, en.y, en.s, 9, CY);
         en.fire -= dt;
         if (en.fire <= 0) { en.fire = 1.4 + Math.random() * 2; bullets.push({ x: en.x, y: en.y + en.s * 0.4, foe: 1 }); }
       }
