@@ -74,10 +74,11 @@
      and misses by a sampled margin. Most attempts miss visibly, a few
      kiss the corner, and roughly one in forty lands it exactly — about
      one perfect corner per five minutes of watching. */
-  var IDLE_MS   = 20000;   // 20s
+  var IDLE_MS   = 12000;   // 12s
   var SPEED     = 118;     // px/sec, roughly the pace of the real thing
   var ATTEMPT_P = 0.38;    // chance a bounce becomes a run at a corner
   var COLORS    = ["#4ef1cc", "#11cab8", "#1986ff", "#f7d507", "#ff6fc8", "#ff4d4d", "#7ef7e0"];
+  var MIN_ANGLE = 0.30;    // ~17deg — never let a path flatten onto an axis
 
   var saver = $("#saver"), mark = $("#saver-mark");
   var idleTimer = null, raf = null, last = 0;
@@ -95,10 +96,22 @@
     mark.style.color = COLORS[ci];
   }
 
+  /* Force the heading back off the axes and re-normalise the speed. Without
+     this the logo can end up with a near-zero vertical component and spend the
+     rest of the session tracking left-right along one line. */
+  function shape() {
+    var sp = Math.hypot(vx, vy) || SPEED;
+    var q  = Math.atan2(Math.abs(vy), Math.abs(vx));
+    if (q < MIN_ANGLE)               q = MIN_ANGLE;
+    if (q > Math.PI / 2 - MIN_ANGLE) q = Math.PI / 2 - MIN_ANGLE;
+    vx = Math.cos(q) * sp * (vx < 0 ? -1 : 1);
+    vy = Math.sin(q) * sp * (vy < 0 ? -1 : 1);
+  }
+
   /* Sampled miss distance, in px, for one corner attempt. */
   function missDistance() {
     var r = Math.random();
-    if (r < 0.025) return 0;                    // dead on
+    if (r < 0.05) return 0;                    // dead on
     if (r < 0.12)  return 2 + Math.random() * 8;  // kisses it
     return 12 + Math.random() * 55;               // visible near miss
   }
@@ -117,9 +130,17 @@
     else                     ty += (cy === 0 ? err : -err);
 
     var dx = tx - x, dy = ty - y;
-    var len = Math.hypot(dx, dy) || 1;
+    var len = Math.hypot(dx, dy);
+    if (!len) return false;
+
+    // Refuse a run that would leave the logo crawling along a wall — those are
+    // the paths that used to flatten the whole thing out.
+    var q = Math.atan2(Math.abs(dy), Math.abs(dx));
+    if (q < MIN_ANGLE || q > Math.PI / 2 - MIN_ANGLE) return false;
+
     vx = (dx / len) * SPEED;
     vy = (dy / len) * SPEED;
+    return true;
   }
 
   function celebrate() {
@@ -146,8 +167,8 @@
 
     if (hitX || hitY) {
       recolor();
-      if (hitX && hitY) celebrate();               // the corner
-      else if (Math.random() < ATTEMPT_P) aimAtCorner(b);
+      if (hitX && hitY) { celebrate(); shape(); }               // the corner
+      else if (!(Math.random() < ATTEMPT_P && aimAtCorner(b))) shape();
     }
 
     mark.style.transform = "translate(" + x.toFixed(1) + "px," + y.toFixed(1) + "px)";
@@ -160,9 +181,10 @@
     var b = bounds();
     x = 40 + Math.random() * Math.max(1, b.w - 80);
     y = 40 + Math.random() * Math.max(1, b.h - 80);
-    var a = (Math.random() * 0.6 + 0.2) * Math.PI;   // never axis-aligned
+    var a = (Math.random() * 0.5 + 0.25) * Math.PI;
     vx = Math.cos(a) * SPEED * (Math.random() < 0.5 ? -1 : 1);
     vy = Math.sin(a) * SPEED * (Math.random() < 0.5 ? -1 : 1);
+    shape();                                        // guarantee a diagonal
     mark.style.color = COLORS[ci];
     last = 0;
     raf = requestAnimationFrame(step);

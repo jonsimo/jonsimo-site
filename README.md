@@ -79,6 +79,21 @@ by `max-height` with `height:auto` — those caps must be written per-brand, bec
 desktop rules they override are `[data-brand=...]` scoped and a media query adds no
 specificity.
 
+### Restraint
+
+The page went through a pass where every element sat in its own bordered, glowing panel
+— three channels plus five socials, over a grid, scanlines, a vignette and a flicker.
+Eight boxes, and nothing allowed to be quiet.
+
+Now the only permanent chrome is the icon frames. Channels have no border or background
+at rest; all of that is the hover state. The grid dropped to 14% opacity, the scanlines
+to 22%, and the flicker is gone. Codex Jr's mark is the only saturated one on the page,
+so it rests slightly desaturated and comes up to full on hover.
+
+The icons are a matched set: square, hard-cornered, one shared size, framed by a
+1px stroke in the channel's own colour. The frame is `padding` + `border` on the `<img>`
+itself with `object-fit:contain` — no wrapper element.
+
 ### Hover
 
 Each channel gets the effect its own product would have:
@@ -111,7 +126,7 @@ poking something). Nothing is on a key combo — nobody discovers a key combo.
 
 | Trigger | Effect |
 | --- | --- |
-| Idle 20s | **The screensaver** (below) |
+| Idle 12s | **The screensaver** (below) |
 
 | Click the `>` prompt glyph | CRT power-cycle — collapse to a line, degauss, snap back |
 | Click the name | Phosphor-green **vectorscope mode** |
@@ -121,8 +136,7 @@ page has nothing to type into; the bare `>` makes no such promise.
 
 ### The screensaver
 
-A DVD bounce carrying Jon's own **SIMO** mark — `assets/simo_video.png`, cropped above
-the `VIDEO` line. It is painted through a CSS `mask` with `background: currentColor`
+A DVD bounce carrying Jon's own **SIMO VIDEO** mark (`assets/simo_video.png`). Painted through a CSS `mask` with `background: currentColor`
 rather than dropped in as an `<img>`, so it still recolours on every bounce. Only the
 alpha matters for a mask, so it is stored as gray+alpha (27 KB).
 
@@ -138,13 +152,21 @@ sampled margin:
 
 | Probability | Miss | Reads as |
 | --- | --- | --- |
-| 2.5% | 0 px | a perfect corner |
+| 5% | 0 px | a perfect corner |
 | ~9% | 2–10 px | kisses it |
 | ~88% | 12–67 px | a visible near miss |
 
 That works out to roughly **one perfect corner per five minutes**, with near misses
-throughout. Motion is delta-timed and clamped, so a backgrounded tab does not teleport
-the logo across the screen on return.
+throughout (verified by simulating 5 minutes of the physics offline).
+
+Every heading is forced at least ~17° off both axes. Without that clamp a corner run
+that starts near a wall leaves the logo with a near-zero vertical component, and it
+spends the rest of the session tracking left-right along a single line — which is
+exactly what happened. A corner attempt whose geometry would be that shallow is refused
+outright and the bounce reflects normally instead.
+
+Motion is delta-timed and clamped, so a backgrounded tab does not teleport the logo
+across the screen on return.
 
 ## Files
 

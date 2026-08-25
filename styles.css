@@ -52,19 +52,17 @@ body{
     linear-gradient(90deg,rgba(var(--amb,120,220,200),.05) 0,rgba(120,220,200,.012) 1px,transparent 1px),
     linear-gradient(rgba(120,220,200,.04) 0,rgba(120,220,200,.012) 1px,transparent 1px);
   background-size:84px 84px,84px 84px;
-  opacity:.5; z-index:0;
+  opacity:.14; z-index:0;
 }
 .crt-scan{
   background:repeating-linear-gradient(180deg,rgba(0,0,0,.30) 0 1px,transparent 1px 3px);
-  opacity:.42; mix-blend-mode:multiply;
+  opacity:.22; mix-blend-mode:multiply;
 }
 .crt-vig{
   background:radial-gradient(ellipse at 50% 45%,transparent 42%,rgba(0,0,0,.55) 100%);
 }
-.crt-flick{
-  background:rgba(120,220,200,.03);
-  opacity:0; animation:flick 7s steps(1) infinite;
-}
+/* The flicker was one more thing moving on a page that already had plenty. */
+.crt-flick{display:none;}
 @keyframes flick{
   0%,96%{opacity:0}
   96.6%{opacity:.5} 97%{opacity:0} 97.4%{opacity:.32} 97.8%,100%{opacity:0}
@@ -84,12 +82,13 @@ body{
 .head{text-align:center;}
 .wordmark{
   position:relative; cursor:pointer; user-select:none;
+  line-height:1.5; padding-top:.15em;
   margin:0;
   font-family:var(--pixel);
-  font-size:clamp(15px,2.8vw,26px);
-  letter-spacing:.10em;
+  font-size:clamp(17px,3.2vw,31px);
+  letter-spacing:.17em;
   color:var(--ink);
-  text-shadow:0 0 2px rgba(207,233,226,.55),0 0 14px rgba(120,220,200,.22);
+  text-shadow:0 0 12px rgba(120,220,200,.14);
   animation:bootIn .9s var(--ease) both;
 }
 /* Chromatic split — the same RGB-fringe trick the VD terminal uses. */
@@ -104,8 +103,8 @@ body{
 
 .tagline{
   margin:clamp(5px,.9vh,10px) 0 0;
-  font-size:clamp(10px,1.5vw,12.5px);
-  letter-spacing:.14em; text-transform:uppercase;
+  font-size:clamp(9.5px,1.3vw,11px);
+  letter-spacing:.32em; text-transform:uppercase;
   color:var(--ink-dim);
 }
 .prefix{
@@ -123,7 +122,7 @@ body{
   display:grid;
   grid-template-columns:minmax(0,1fr);
   grid-template-rows:repeat(3,minmax(0,1fr));
-  gap:clamp(7px,1.1vh,12px);
+  gap:clamp(12px,2.4vh,30px);
   min-height:0;
 }
 
@@ -136,18 +135,18 @@ body{
   text-decoration:none; color:inherit;
   isolation:isolate; overflow:hidden;
   min-width:0;
-  border:1px solid var(--line);
-  border-radius:3px;
-  background:
-    radial-gradient(120% 140% at 50% 120%,rgba(var(--c-rgb),.055),transparent 62%),
-    var(--bg-lift);
+  border:1px solid transparent;
+  border-radius:4px;
+  background:transparent;
   transition:border-color .35s var(--ease),background .35s var(--ease),transform .35s var(--ease);
 }
+/* Everything that used to be permanent chrome is now the hover state, so the
+   resting page is just three logos on black. */
 .tile:hover,.tile:focus-visible{
-  border-color:rgba(var(--c-rgb),.55);
+  border-color:rgba(var(--c-rgb),.28);
   background:
-    radial-gradient(120% 150% at 50% 118%,rgba(var(--c-rgb),.16),transparent 66%),
-    var(--bg-lift);
+    radial-gradient(120% 150% at 50% 118%,rgba(var(--c-rgb),.10),transparent 66%),
+    rgba(255,255,255,.012);
   transform:translateY(-2px);
 }
 .tile:focus-visible{outline:2px solid rgba(var(--c-rgb),.9); outline-offset:3px;}
@@ -257,7 +256,7 @@ body{
   max-width:96%; margin-inline:auto;
   display:flex; align-items:center; justify-content:center;
   gap:clamp(16px,2.6vw,38px);
-  height:clamp(72px,23vh,230px);
+  height:clamp(66px,18.5vh,196px);
   min-width:0;
 }
 
@@ -272,17 +271,37 @@ body{
   object-fit:contain;
   transition:filter .35s var(--ease),transform .35s var(--ease);
 }
-.mark{flex:0 0 auto; min-height:0; min-width:0;}
+/* Every icon sits in the same square, hard-cornered frame, so the three read
+   as one set instead of three differently-shaped cutouts. The padding is on
+   the <img> itself and object-fit:contain keeps the art inside it — no wrapper
+   element needed. */
+.mark{
+  flex:0 0 auto; min-height:0; min-width:0;
+  aspect-ratio:1; object-fit:contain;
+  padding:clamp(7px,1vw,15px);
+  border:1px solid rgba(var(--c-rgb),.30);
+  background:
+    linear-gradient(rgba(var(--c-rgb),.05),rgba(var(--c-rgb),.015));
+  box-shadow:0 0 14px rgba(var(--c-rgb),.10),
+             inset 0 0 22px rgba(var(--c-rgb),.05);
+  transition:filter .35s var(--ease),transform .35s var(--ease),
+             border-color .35s var(--ease),box-shadow .35s var(--ease);
+}
+.tile:hover .mark,.tile:focus-visible .mark{
+  border-color:rgba(var(--c-rgb),.62);
+  box-shadow:0 0 22px rgba(var(--c-rgb),.24),
+             inset 0 0 26px rgba(var(--c-rgb),.10);
+}
 .type{flex:0 1 auto; min-height:0; min-width:0;}
 [data-brand="vd"] .type,
 [data-brand="at"] .type,
 [data-brand="at"] .mark{
-  filter:brightness(1.18) drop-shadow(0 0 12px rgba(var(--c-rgb),.26));
+  filter:brightness(1.08) drop-shadow(0 0 9px rgba(var(--c-rgb),.16));
 }
 .tile:hover .type,.tile:focus-visible .type,
 .tile:hover .mark,.tile:focus-visible .mark{
-  filter:brightness(1.24) drop-shadow(0 0 6px rgba(var(--c-rgb),.55))
-         drop-shadow(0 0 26px rgba(var(--c-rgb),.30));
+  filter:brightness(1.2) drop-shadow(0 0 6px rgba(var(--c-rgb),.45))
+         drop-shadow(0 0 24px rgba(var(--c-rgb),.24));
 }
 /* Neon tube striking: a stepped flicker, then settle. Not an ease — a tube
    that fades up smoothly reads as a dimmer, not as ignition. */
@@ -295,21 +314,20 @@ body{
 /* Per-brand proportions inside the shared lockup band. */
 /* Icons share one optical size; wordmarks are capped so no one channel
    shouts louder than the others. */
-[data-brand="vd"] .mark{max-height:88%;}
-[data-brand="at"] .mark{max-height:74%;}
-[data-brand="cj"] .mark{max-height:92%; image-rendering:pixelated;
-  filter:drop-shadow(0 0 10px rgba(var(--c-rgb),.34));}
+[data-brand="vd"] .mark,
+[data-brand="at"] .mark,
+[data-brand="cj"] .mark{max-height:96%;}
+[data-brand="cj"] .mark{image-rendering:pixelated;}
 
-[data-brand="vd"] .type{max-height:100%; max-width:min(100%,760px);}
-[data-brand="at"] .type{max-height:52%;  max-width:min(100%,780px);}
-[data-brand="cj"] .type{max-height:88%;  max-width:min(100%,720px);
-  filter:drop-shadow(0 0 14px rgba(255,111,200,.28));}
+[data-brand="vd"] .type{max-height:96%;  max-width:min(100%,470px);}
+[data-brand="at"] .type{max-height:34%;  max-width:min(100%,455px);}
+[data-brand="cj"] .type{max-height:82%;  max-width:min(100%,470px);
+  filter:saturate(.9) brightness(.94) drop-shadow(0 0 10px rgba(255,111,200,.14));}
 [data-brand="cj"]:hover .mark,[data-brand="cj"]:focus-visible .mark{
-  transform:translateY(-3px);
-  filter:drop-shadow(0 0 5px rgba(247,213,7,.55)) drop-shadow(0 0 22px rgba(var(--c-rgb),.55));
+  filter:drop-shadow(0 0 5px rgba(247,213,7,.45));
 }
 [data-brand="cj"]:hover .type,[data-brand="cj"]:focus-visible .type{
-  filter:brightness(1.12) drop-shadow(0 0 18px rgba(255,111,200,.55));
+  filter:saturate(1) brightness(1.1) drop-shadow(0 0 18px rgba(255,111,200,.5));
 }
 
 /* The wordmarks ARE the names — keep the text for screen readers only. */
@@ -350,8 +368,8 @@ body{
 .socials{
   display:grid;
   grid-template-columns:repeat(5,minmax(0,1fr));
-  gap:clamp(8px,1.2vw,14px);
-  height:clamp(64px,9vh,94px);
+  gap:clamp(4px,.8vw,10px);
+  height:clamp(54px,7.5vh,78px);
 }
 [data-net="ig"]  {--c:#ff6fc8; --c-rgb:255,111,200;}
 [data-net="yt"]  {--c:#ff4d4d; --c-rgb:255,77,77;}
@@ -365,14 +383,14 @@ body{
   align-items:center; justify-content:center;
   gap:clamp(5px,.9vh,9px);
   text-decoration:none; color:var(--ink-dim);
-  border:1px solid var(--line); border-radius:3px;
-  background:var(--bg-lift);
+  border:1px solid transparent; border-radius:3px;
+  background:transparent;
   transition:color .3s var(--ease),border-color .3s var(--ease),
              transform .3s var(--ease),background .3s var(--ease);
 }
 .slink:hover,.slink:focus-visible{
   color:var(--c);
-  border-color:rgba(var(--c-rgb),.6);
+  border-color:rgba(var(--c-rgb),.3);
   transform:translateY(-2px);
 }
 .slink:focus-visible{outline:2px solid rgba(var(--c-rgb),.9); outline-offset:3px;}
@@ -380,13 +398,13 @@ body{
 /* Bloom lives on its own layer so it can fade without repainting the icon. */
 .sglow{
   position:absolute; inset:0; opacity:0; pointer-events:none;
-  background:radial-gradient(120% 150% at 50% 118%,rgba(var(--c-rgb),.20),transparent 66%);
+  background:radial-gradient(120% 150% at 50% 118%,rgba(var(--c-rgb),.13),transparent 66%);
   transition:opacity .3s var(--ease);
 }
 .slink:hover .sglow,.slink:focus-visible .sglow{opacity:1;}
 
 .slink svg{
-  width:clamp(26px,3.6vw,40px); height:auto; display:block;
+  width:clamp(22px,2.9vw,32px); height:auto; display:block;
   fill:none; stroke:currentColor; stroke-width:1.5;
   stroke-linecap:round; stroke-linejoin:round;
   transition:filter .3s var(--ease);
@@ -420,7 +438,7 @@ body{
 .saver-mark{
   position:absolute; top:0; left:0;
   width:clamp(200px,22vw,340px);
-  aspect-ratio:909 / 420;
+  aspect-ratio:932 / 520;
   color:#4ef1cc;
   background:currentColor;
   -webkit-mask:url("assets/simo-mark.png") center / contain no-repeat;
