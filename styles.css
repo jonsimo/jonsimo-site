@@ -297,10 +297,7 @@ body{
 }
 [data-brand="at"] .console .c{color:rgba(var(--c-rgb),.62);}   /* commands brighter */
 [data-brand="at"] .console .k{color:rgba(126,247,224,.7);}     /* ok/checks */
-[data-brand="at"]:hover .console,[data-brand="at"]:focus-within .console{
-  animation:consoleScroll 5.5s linear infinite;
-}
-@keyframes consoleScroll{from{transform:translateY(0)}to{transform:translateY(-50%)}}to{top:108%}}
+/* stepped line-append is JS-driven (see main.js) */to{top:108%}}
 
 /* ── Lockup ──────────────────────────────────────────────────────
    One centred group per channel: icon, wordmark, caption directly beneath.

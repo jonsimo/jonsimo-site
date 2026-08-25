@@ -342,9 +342,11 @@
       media.appendChild(f);
     });
   });
-  /* ═══ Alpha Tracker console — fill the streaming boot log ═══════════ */
+  /* ═══ Alpha Tracker console — lines get WRITTEN in at the bottom, older
+     lines step up, like a live command line. JS-driven, only while open. ═══ */
   (function () {
-    var el = document.querySelector('[data-brand="at"] .console');
+    var tile = document.querySelector('.tile[data-brand="at"]');
+    var el = tile && tile.querySelector('.console');
     if (!el) return;
     var LINES = [
       ['c', '$ at sync --project vector-drift'],
@@ -372,14 +374,56 @@
       ['', '  rebuild  ] tracing 388 segments'],
       ['k', '  ✓ sprite hot-reloaded']
     ];
-    function render(list) {
-      return list.map(function (r) {
-        var cls = r[0] ? ' class="' + r[0] + '"' : '';
-        var t = r[1].replace(/&/g, '&amp;').replace(/</g, '&lt;');
-        return '<span' + cls + '>' + t + '</span>';
-      }).join('\n');
+    function mkLine(idx) {
+      var r = LINES[idx % LINES.length];
+      var s = document.createElement('span');
+      if (r[0]) s.className = r[0];
+      s.textContent = r[1];
+      return s;
     }
-    // duplicate the block so a -50% translate loops seamlessly
-    el.innerHTML = render(LINES) + '\n' + render(LINES);
+    var ptr = 0, running = false, lh = 0, timer = null, onEnd = null;
+
+    function fill() {           // prefill enough lines to cover the box
+      el.style.transition = 'none';
+      el.style.transform = 'translateY(0)';
+      el.innerHTML = '';
+      for (var i = 0; i < 22; i++) el.appendChild(mkLine(ptr++));
+      lh = el.lastChild ? el.lastChild.offsetHeight : 16;
+    }
+    function step() {
+      if (!running) return;
+      el.appendChild(mkLine(ptr++));         // write the new line at the bottom
+      el.style.transition = 'none';
+      el.style.transform = 'translateY(0)';
+      // next frame: slide the whole stack up by one line
+      requestAnimationFrame(function () {
+        if (!running) return;
+        el.style.transition = 'transform .14s linear';
+        el.style.transform = 'translateY(-' + lh + 'px)';
+      });
+    }
+    onEnd = function (e) {
+      if (e.propertyName !== 'transform') return;
+      el.style.transition = 'none';
+      if (el.firstChild) el.removeChild(el.firstChild);   // drop the top line
+      el.style.transform = 'translateY(0)';
+      if (running) timer = setTimeout(step, 150 + Math.random() * 220);
+    };
+
+    function start() {
+      if (running || reduced) { if (reduced) fill(); return; }
+      running = true; fill();
+      el.addEventListener('transitionend', onEnd);
+      timer = setTimeout(step, 200);
+    }
+    function stop() {
+      running = false;
+      clearTimeout(timer);
+      el.removeEventListener('transitionend', onEnd);
+    }
+    tile.addEventListener('pointerenter', start);
+    tile.addEventListener('pointerleave', stop);
+    tile.addEventListener('focusin', start);
+    tile.addEventListener('focusout', stop);
   })();
 })();
