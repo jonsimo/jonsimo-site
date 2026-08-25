@@ -42,57 +42,35 @@ magick src.png -crop WxH+X+Y +repage -level 8%,88% \
   -alpha off -compose CopyOpacity -composite  keyed.png
 ```
 
-The glow then fades to nothing instead of ending at an edge, and the mark sits happily
-on any background. Trim the empty margin with a **measured bbox**, never `-trim`:
+**Then crop to the ink, and measure the ink with a threshold.** A soft glow makes alpha
+non-zero across the whole canvas, so `-format %@` reports the full canvas and reports it
+confidently. Threshold the alpha first:
 
 ```sh
-BB=$(magick keyed.png -format %@ info:)      # measure
-magick keyed.png -crop "$BB" +repage ...     # then crop
+BB=$(magick keyed.png -alpha extract -threshold 15% -format %@ info:)
+magick keyed.png -crop "$BB" +repage ...      # not -trim: it premultiplies
 ```
 
-`-trim` associates the alpha and premultiplies the RGB, which crushes a
-luminance-keyed neon mark to black. Ask how I know.
-
-`vd-icon` carries a faint reference grid in its source. Brightness alone will not remove
-it — the rules that cross the mark's bloom are as bright as the mark — so its alpha mask
-is opened morphologically (`-morphology Open Disk:2.5`), which deletes anything thinner
-than the structuring element. Watch the result: pushed too far, the open eats real
-detail (it took a bite out of the Alpha Tracker controller's grip before that mark was
-replaced with a pre-keyed source).
+Skip this and every mark ships with asymmetric transparent padding baked in — Alpha
+Tracker's wordmark carried 35px of dead space above and 2px below, Codex Jr's 25px left
+and 0 right. The boxes then centre perfectly while the artwork visibly does not, which
+looks like sloppy layout and is impossible to fix in CSS. Every mark here is cropped so
+its ink exactly fills its canvas.
 
 ### Lockup
 
-Icon and wordmark are centred as **one unit**, and the wordmark is never smaller than
-its icon. The lockup is given every pixel of tile height the page can spare: tile
-padding is minimal, and the caption is absolutely positioned and revealed on hover, so
-it costs the logos no height at all.
+One centred group per channel — icon, wordmark, caption directly beneath — with the
+whole group centred in its row. The lock box **hugs its content** (`height:auto`) rather
+than filling a fixed band: with a fixed band, a mark that does not fill it leaves dead
+air and the caption drifts away from the logo on some rows but not others.
 
-Three bars in one viewport is a hard ceiling — each bar gets roughly a third of the
-screen, and since the wordmarks are wide (Alpha Tracker's is 8.5:1) they are *height*-
-limited. Squeezing the chrome buys about 2×; genuinely tripling them would require
-scrolling sections, which was considered and rejected.
+Marks are sized from a shared `--band` token, tuned per aspect ratio rather than set to
+one number — an 11:1 wordmark and a 0.74:1 sprite need very different heights to carry
+the same optical weight. The per-channel heights also keep the three lockups within
+~80px of each other in width, so their edges read as deliberate.
 
-The band height is a `vh` clamp rather than `height:100%`. A percentage height needs a
-definite parent to resolve against; without one the images fall back to intrinsic size
-and blow through the tile. On narrow screens the lockup stacks and each mark is capped
-by `max-height` with `height:auto` — those caps must be written per-brand, because the
-desktop rules they override are `[data-brand=...]` scoped and a media query adds no
-specificity.
-
-### Restraint
-
-The page went through a pass where every element sat in its own bordered, glowing panel
-— three channels plus five socials, over a grid, scanlines, a vignette and a flicker.
-Eight boxes, and nothing allowed to be quiet.
-
-Now the only permanent chrome is the icon frames. Channels have no border or background
-at rest; all of that is the hover state. The grid dropped to 14% opacity, the scanlines
-to 22%, and the flicker is gone. Codex Jr's mark is the only saturated one on the page,
-so it rests slightly desaturated and comes up to full on hover.
-
-The icons are a matched set: square, hard-cornered, one shared size, framed by a
-1px stroke in the channel's own colour. The frame is `padding` + `border` on the `<img>`
-itself with `object-fit:contain` — no wrapper element.
+The column is 940px, not 1180px. With the content around 450px wide, the wider column
+made the space read as slack rather than as composition.
 
 ### Hover
 

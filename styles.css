@@ -16,6 +16,8 @@
 }
 
 :root{
+  --band:clamp(58px,15vh,150px);
+  --lock-gap:clamp(16px,2.6vw,36px);
   --bg:#05070a;
   --bg-lift:#080b10;
   --ink:#cfe9e2;
@@ -75,7 +77,7 @@ body{
   display:flex; flex-direction:column;
   gap:clamp(9px,1.5vh,18px);
   padding:clamp(12px,2vh,24px) clamp(14px,4vw,48px) clamp(10px,1.6vh,20px);
-  max-width:1180px; margin:0 auto; width:100%;
+  max-width:940px; margin:0 auto; width:100%;
 }
 
 /* ── Header ──────────────────────────────────────────────────────── */
@@ -130,8 +132,8 @@ body{
   position:relative;
   display:flex; flex-direction:column;
   align-items:center; justify-content:center;
-  gap:0;
-  padding:clamp(5px,.7vh,9px) clamp(12px,2vw,22px);
+  gap:clamp(10px,1.6vh,20px);
+  padding:clamp(6px,1vh,14px) clamp(12px,2vw,22px);
   text-decoration:none; color:inherit;
   isolation:isolate; overflow:hidden;
   min-width:0;
@@ -246,88 +248,62 @@ body{
 @keyframes scanbar{from{top:-30%}to{top:104%}}
 
 /* ── Lockup ──────────────────────────────────────────────────────
-   A fixed-width two-column grid, not a centred flex row. Centring each
-   lockup independently would put every icon at a different x, because the
-   wordmarks are different widths; a shared grid puts all three icons in one
-   column down the page. */
+   One centred group per channel: icon, wordmark, caption directly beneath.
+   Every mark is cropped to its exact ink (no transparent padding in the
+   asset), so centring the boxes actually centres what you see — with the
+   padding still baked in, Alpha Tracker's wordmark carried 35px of dead
+   space above and 2px below and sat visibly low. */
 .lock{
-  /* Icon + wordmark are centred as ONE unit, so the pair reads as a single
-     lockup rather than two things parked in fixed columns. */
-  max-width:96%; margin-inline:auto;
   display:flex; align-items:center; justify-content:center;
-  gap:clamp(16px,2.6vw,38px);
-  height:clamp(66px,18.5vh,196px);
-  min-width:0;
+  gap:var(--lock-gap);
+  height:auto;                 /* hug the marks, so the caption sits a
+                                  consistent distance below the ink */
+  min-width:0; max-width:100%;
 }
-
-/* ── Marks ────────────────────────────────────────────────────────
-   The projects' real logos, lifted from the game menu, the installer art
-   and the title PSD. The neon ones were painted on black, so their alpha
-   is derived from luminance at build time (see README) — the glow fades
-   out instead of ending at a crop rectangle, and no blend mode is needed. */
 .mark,.type{
   display:block; width:auto; height:auto;
   max-width:100%; max-height:100%;
+  min-height:0; min-width:0;
   object-fit:contain;
   transition:filter .35s var(--ease),transform .35s var(--ease);
 }
-/* Every icon sits in the same square, hard-cornered frame, so the three read
-   as one set instead of three differently-shaped cutouts. The padding is on
-   the <img> itself and object-fit:contain keeps the art inside it — no wrapper
-   element needed. */
-.mark{
-  flex:0 0 auto; min-height:0; min-width:0;
-  aspect-ratio:1; object-fit:contain;
-  padding:clamp(7px,1vw,15px);
-  border:1px solid rgba(var(--c-rgb),.30);
-  background:
-    linear-gradient(rgba(var(--c-rgb),.05),rgba(var(--c-rgb),.015));
-  box-shadow:0 0 14px rgba(var(--c-rgb),.10),
-             inset 0 0 22px rgba(var(--c-rgb),.05);
-  transition:filter .35s var(--ease),transform .35s var(--ease),
-             border-color .35s var(--ease),box-shadow .35s var(--ease);
-}
-.tile:hover .mark,.tile:focus-visible .mark{
-  border-color:rgba(var(--c-rgb),.62);
-  box-shadow:0 0 22px rgba(var(--c-rgb),.24),
-             inset 0 0 26px rgba(var(--c-rgb),.10);
-}
-.type{flex:0 1 auto; min-height:0; min-width:0;}
-[data-brand="vd"] .type,
-[data-brand="at"] .type,
-[data-brand="at"] .mark{
+.mark{flex:0 0 auto;}
+.type{flex:0 1 auto;}
+
+/* Marks are sized against the band, tuned per aspect ratio so a 11:1 wordmark
+   and a 0.74:1 sprite carry the same optical weight rather than the same px. */
+[data-brand="cj"] .mark{height:var(--band); image-rendering:pixelated;}
+[data-brand="vd"] .mark{height:var(--band);}
+[data-brand="at"] .mark{height:calc(var(--band) * .70);}
+
+[data-brand="vd"] .type{height:calc(var(--band) * .90);}
+[data-brand="cj"] .type{height:calc(var(--band) * .72);}
+[data-brand="at"] .type{height:calc(var(--band) * .20);}
+
+.mark,.type{
   filter:brightness(1.08) drop-shadow(0 0 9px rgba(var(--c-rgb),.16));
 }
-.tile:hover .type,.tile:focus-visible .type,
-.tile:hover .mark,.tile:focus-visible .mark{
+[data-brand="cj"] .type{
+  filter:saturate(.9) brightness(.94) drop-shadow(0 0 10px rgba(255,111,200,.14));
+}
+.tile:hover .mark,.tile:focus-visible .mark,
+.tile:hover .type,.tile:focus-visible .type{
   filter:brightness(1.2) drop-shadow(0 0 6px rgba(var(--c-rgb),.45))
          drop-shadow(0 0 24px rgba(var(--c-rgb),.24));
 }
-/* Neon tube striking: a stepped flicker, then settle. Not an ease — a tube
-   that fades up smoothly reads as a dimmer, not as ignition. */
+[data-brand="cj"]:hover .type,[data-brand="cj"]:focus-visible .type{
+  filter:saturate(1) brightness(1.1) drop-shadow(0 0 18px rgba(255,111,200,.5));
+}
+[data-brand="cj"]:hover .mark,[data-brand="cj"]:focus-visible .mark{
+  filter:drop-shadow(0 0 5px rgba(247,213,7,.45));
+}
+
+/* Wordmarks strike like a neon tube: a stepped flicker, then settle. A smooth
+   ease-in reads as a dimmer, not as ignition. */
 .tile:hover .type,.tile:focus-visible .type{animation:ignite .42s steps(1,end);}
 @keyframes ignite{
   0%{opacity:.55} 12%{opacity:1} 22%{opacity:.4} 34%{opacity:1}
   46%{opacity:.7} 58%{opacity:1} 100%{opacity:1}
-}
-
-/* Per-brand proportions inside the shared lockup band. */
-/* Icons share one optical size; wordmarks are capped so no one channel
-   shouts louder than the others. */
-[data-brand="vd"] .mark,
-[data-brand="at"] .mark,
-[data-brand="cj"] .mark{max-height:96%;}
-[data-brand="cj"] .mark{image-rendering:pixelated;}
-
-[data-brand="vd"] .type{max-height:96%;  max-width:min(100%,470px);}
-[data-brand="at"] .type{max-height:34%;  max-width:min(100%,455px);}
-[data-brand="cj"] .type{max-height:82%;  max-width:min(100%,470px);
-  filter:saturate(.9) brightness(.94) drop-shadow(0 0 10px rgba(255,111,200,.14));}
-[data-brand="cj"]:hover .mark,[data-brand="cj"]:focus-visible .mark{
-  filter:drop-shadow(0 0 5px rgba(247,213,7,.45));
-}
-[data-brand="cj"]:hover .type,[data-brand="cj"]:focus-visible .type{
-  filter:saturate(1) brightness(1.1) drop-shadow(0 0 18px rgba(255,111,200,.5));
 }
 
 /* The wordmarks ARE the names — keep the text for screen readers only. */
@@ -336,20 +312,16 @@ body{
   clip-path:inset(50%); white-space:nowrap;
 }
 
-/* Meta line */
+/* Caption sits in the flow directly under the lockup, so the channel reads as
+   one block instead of a logo with a label pinned to the floor. */
 .meta{
-  /* Absolutely positioned so it costs the lockup no height at all — the
-     logos get the whole tile, and the caption fades in on hover. */
-  position:absolute; left:0; right:0; bottom:clamp(5px,.9vh,10px);
-  width:100%; padding:0 clamp(12px,2vw,22px);
-  opacity:0; transform:translateY(3px);
-  transition:opacity .3s var(--ease),transform .3s var(--ease);
   display:flex; align-items:baseline; justify-content:center;
-  gap:clamp(8px,1.6vw,16px); flex-wrap:wrap;
-  font-size:clamp(9.5px,1.25vw,11.5px);
-  letter-spacing:.15em; text-transform:uppercase;
+  gap:clamp(8px,1.4vw,15px); flex-wrap:wrap;
+  font-size:clamp(9px,1.1vw,10.5px);
+  letter-spacing:.2em; text-transform:uppercase;
+  opacity:.55; transition:opacity .3s var(--ease);
 }
-.tile:hover .meta,.tile:focus-visible .meta{opacity:1; transform:none;}
+.tile:hover .meta,.tile:focus-visible .meta{opacity:1;}
 .desc{color:var(--ink-dim); transition:color .3s var(--ease);}
 .tile:hover .desc,.tile:focus-visible .desc{color:var(--ink);}
 .url{color:var(--ink-faint); transition:color .3s var(--ease); white-space:nowrap;}
@@ -491,24 +463,14 @@ body.degauss .stage{animation:degauss .9s var(--ease);}
 /* ── Responsive ──────────────────────────────────────────────────── */
 @media (max-width:720px){
   .channels{grid-template-rows:none; grid-auto-rows:minmax(140px,auto); min-height:0;}
-  /* Stacked, so the band no longer sets the size — each mark is capped by
-     max-height with height:auto, which keeps its aspect ratio intact. */
-  .lock{
-    max-width:100%; flex-direction:column;
-    gap:10px; height:auto;
-  }
-  .mark,.type{max-width:82%;}
-  /* Per-brand selectors, because the desktop rules they override are
-     [data-brand=...] scoped and a media query adds no specificity. */
-  [data-brand="cj"] .mark{max-height:clamp(58px,13vh,96px);}
-  [data-brand="vd"] .mark{max-height:clamp(58px,13vh,96px);}
-  [data-brand="at"] .mark{max-height:clamp(48px,11vh,80px);}
-  [data-brand="vd"] .type{max-height:clamp(52px,12vh,90px); max-width:min(72vw,320px);}
-  [data-brand="at"] .type{max-height:clamp(18px,4.2vh,30px); max-width:min(72vw,300px);}
-  [data-brand="cj"] .type{max-height:clamp(32px,7.5vh,54px);}
-  .meta{position:static; opacity:1; transform:none;
-    width:100%; padding-left:0; flex-direction:column;
-    align-items:center; gap:5px; text-align:center;}
+  .lock{flex-direction:column; gap:clamp(10px,2vh,16px); height:auto;}
+  .mark,.type{height:auto; max-width:78%;}
+  [data-brand="cj"] .mark,[data-brand="vd"] .mark{max-height:clamp(64px,14vh,104px);}
+  [data-brand="at"] .mark{max-height:clamp(52px,11vh,84px);}
+  [data-brand="vd"] .type{max-height:clamp(52px,12vh,88px);}
+  [data-brand="cj"] .type{max-height:clamp(34px,8vh,58px);}
+  [data-brand="at"] .type{max-height:clamp(16px,3.6vh,26px); max-width:74%;}
+  .meta{flex-direction:column; align-items:center; gap:5px; text-align:center;}
   .colophon{gap:9px;}
   .socials{grid-template-columns:repeat(3,minmax(0,1fr)); height:auto;}
   .slink{aspect-ratio:1/.72; }
