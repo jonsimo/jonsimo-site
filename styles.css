@@ -397,6 +397,10 @@ body{
    webp), so it brightens only the icon + wordmark, never the box/console. */
 [data-brand="at"] .neon{position:relative; display:inline-flex; align-items:center; line-height:0;}
 [data-brand="at"]:not(.open) .n-m{display:none;}  /* icon out of flow when collapsed → wordmark stays centred */
+/* Keep the icon margin at 0 so the glint mask (sized to the .n-m box) stays
+   aligned with the icon; put the icon↔wordmark gap on the lockup instead. */
+[data-brand="at"] .mark{margin-inline-end:0 !important;}
+[data-brand="at"].open .lock{gap:var(--lock-gap);}
 [data-brand="at"] .glint{
   position:absolute; inset:0; pointer-events:none; opacity:0; z-index:2;
   mix-blend-mode:screen;
