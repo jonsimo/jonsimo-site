@@ -17,14 +17,19 @@
      across them to navigate doesn't make each one half-animate. Keyboard
      focus opens immediately. */
   (function () {
-    var DWELL = 170;   // ms the cursor must rest before a box opens
+    var DWELL = 230;   // ms the cursor must rest ON THE LOGO before a box opens
     $$(".tile[data-brand]").forEach(function (tile) {
+      var logo = tile.querySelector(".lock");   // the condensed logo itself
+      if (!logo) return;
       var t = null;
       function open()  { clearTimeout(t); tile.classList.add("open"); }
       function close() { clearTimeout(t); tile.classList.remove("open"); }
-      tile.addEventListener("pointerenter", function () {
+      // only a rest ON THE LOGO opens it — sweeping the box to navigate won't
+      logo.addEventListener("pointerenter", function () {
         clearTimeout(t); t = setTimeout(open, DWELL);
       });
+      logo.addEventListener("pointerleave", function () { clearTimeout(t); }); // cancel pending; stay open if already open
+      // once open, stays open until the cursor leaves the whole tile
       tile.addEventListener("pointerleave", close);
       tile.addEventListener("pointercancel", close);
       tile.addEventListener("focusin", open);

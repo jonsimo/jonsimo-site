@@ -396,6 +396,7 @@ body{
 /* Alpha Tracker scan — a sweep clipped to the neon shapes (mask-image of each
    webp), so it brightens only the icon + wordmark, never the box/console. */
 [data-brand="at"] .neon{position:relative; display:inline-flex; align-items:center; line-height:0;}
+[data-brand="at"]:not(.open) .n-m{display:none;}  /* icon out of flow when collapsed → wordmark stays centred */
 [data-brand="at"] .glint{
   position:absolute; inset:0; pointer-events:none; opacity:0; z-index:2;
   mix-blend-mode:screen;
