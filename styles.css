@@ -393,6 +393,22 @@ body{
 }
 
 
+/* Alpha Tracker scan — a sweep clipped to the neon shapes (mask-image of each
+   webp), so it brightens only the icon + wordmark, never the box/console. */
+[data-brand="at"] .neon{position:relative; display:inline-flex; align-items:center; line-height:0;}
+[data-brand="at"] .glint{
+  position:absolute; inset:0; pointer-events:none; opacity:0; z-index:2;
+  mix-blend-mode:screen;
+  background:linear-gradient(180deg,transparent 0%,
+    rgba(200,255,246,.5) 46%, rgba(150,255,240,.85) 50%, rgba(200,255,246,.5) 54%,
+    transparent 100%);
+  background-repeat:no-repeat; background-size:100% 26%; background-position:0 -40%;
+}
+[data-brand="at"] .n-m .glint{-webkit-mask:url(assets/at-icon.webp) center/contain no-repeat; mask:url(assets/at-icon.webp) center/contain no-repeat;}
+[data-brand="at"] .n-t .glint{-webkit-mask:url(assets/at-wordmark.webp) center/contain no-repeat; mask:url(assets/at-wordmark.webp) center/contain no-repeat;}
+[data-brand="at"].open .glint{opacity:1; animation:atGlint 2.8s cubic-bezier(.45,0,.55,1) infinite;}
+@keyframes atGlint{from{background-position:0 -45%}to{background-position:0 145%}}
+
 /* ── Footer: the socials are a FOURTH ROW, not a footnote ─────────
    Same border, same ground, same bracket language as a channel. */
 .foot{display:flex; flex-direction:column; gap:clamp(9px,1.4vh,14px);}
