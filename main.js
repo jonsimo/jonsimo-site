@@ -12,6 +12,26 @@
   var $  = function (s, r) { return (r || document).querySelector(s); };
   var $$ = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
 
+  /* ═══ Dwell-gated expand ═══════════════════════════════════════
+     Project boxes only open after a short hold, so sweeping the cursor
+     across them to navigate doesn't make each one half-animate. Keyboard
+     focus opens immediately. */
+  (function () {
+    var DWELL = 170;   // ms the cursor must rest before a box opens
+    $$(".tile[data-brand]").forEach(function (tile) {
+      var t = null;
+      function open()  { clearTimeout(t); tile.classList.add("open"); }
+      function close() { clearTimeout(t); tile.classList.remove("open"); }
+      tile.addEventListener("pointerenter", function () {
+        clearTimeout(t); t = setTimeout(open, DWELL);
+      });
+      tile.addEventListener("pointerleave", close);
+      tile.addEventListener("pointercancel", close);
+      tile.addEventListener("focusin", open);
+      tile.addEventListener("focusout", close);
+    });
+  })();
+
   var yr = $("#yr");
   if (yr) yr.textContent = String(new Date().getFullYear());
 

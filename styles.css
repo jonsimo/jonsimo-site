@@ -155,7 +155,7 @@ body{
 }
 /* Everything that used to be permanent chrome is now the hover state, so the
    resting page is just three logos on black. */
-.tile:hover,.tile:focus-visible{
+.tile.open,.tile.open{
   border-color:rgba(var(--c-rgb),.55);
   background:
     radial-gradient(120% 150% at 50% 118%,rgba(var(--c-rgb),.16),transparent 66%),
@@ -175,11 +175,11 @@ body{
 .brackets i:nth-child(2){top:8px;  right:8px; border-left:0; border-bottom:0;}
 .brackets i:nth-child(3){bottom:8px;left:8px;  border-right:0;border-top:0;}
 .brackets i:nth-child(4){bottom:8px;right:8px; border-left:0; border-top:0;}
-.tile:hover .brackets i,.tile:focus-visible .brackets i{opacity:1;}
-.tile:hover .brackets i:nth-child(1),.tile:focus-visible .brackets i:nth-child(1){top:5px;left:5px;}
-.tile:hover .brackets i:nth-child(2),.tile:focus-visible .brackets i:nth-child(2){top:5px;right:5px;}
-.tile:hover .brackets i:nth-child(3),.tile:focus-visible .brackets i:nth-child(3){bottom:5px;left:5px;}
-.tile:hover .brackets i:nth-child(4),.tile:focus-visible .brackets i:nth-child(4){bottom:5px;right:5px;}
+.tile.open .brackets i,.tile.open .brackets i{opacity:1;}
+.tile.open .brackets i:nth-child(1),.tile.open .brackets i:nth-child(1){top:5px;left:5px;}
+.tile.open .brackets i:nth-child(2),.tile.open .brackets i:nth-child(2){top:5px;right:5px;}
+.tile.open .brackets i:nth-child(3),.tile.open .brackets i:nth-child(3){bottom:5px;left:5px;}
+.tile.open .brackets i:nth-child(4),.tile.open .brackets i:nth-child(4){bottom:5px;right:5px;}
 
 /* ── Per-brand hover effects ──────────────────────────────────────
    Each channel gets the effect its own product would have: sparks off the
@@ -187,7 +187,7 @@ body{
    tracker. All CSS, all paused until hover, all off under reduced-motion. */
 .fx{position:absolute; inset:0; pointer-events:none; overflow:hidden; opacity:0;
     transition:opacity .3s var(--ease);}
-.tile:hover .fx,.tile:focus-visible .fx{opacity:1;}
+.tile.open .fx,.tile.open .fx{opacity:1;}
 
 /* Codex Jr — wizard sparks drifting up off the mark. */
 [data-brand="cj"] .fx i{
@@ -195,7 +195,7 @@ body{
   background:var(--c2); box-shadow:0 0 10px var(--c2),0 0 3px #fff;
   opacity:0; animation:spark 2.4s linear infinite paused;
 }
-[data-brand="cj"]:hover .fx i,[data-brand="cj"]:focus-visible .fx i{animation-play-state:running;}
+[data-brand="cj"].open .fx i,[data-brand="cj"].open .fx i{animation-play-state:running;}
 @keyframes spark{
   0%{opacity:0; bottom:-2%;  transform:scale(.5)}
   14%{opacity:1}
@@ -224,14 +224,14 @@ body{
   opacity:0; pointer-events:none; z-index:0;
   transition:opacity .5s var(--ease);
 }
-[data-brand="vd"]:hover .sim,[data-brand="vd"]:focus-within .sim,
+[data-brand="vd"].open .sim,[data-brand="vd"].open .sim,
 [data-brand="vd"].playing .sim{opacity:1;}
 /* Lockup + caption ride above the sim; a soft scrim keeps the wordmark legible
    over the moving field without hiding the action around it. */
 [data-brand="vd"] .lock,[data-brand="vd"] .meta{position:relative; z-index:1;}
 [data-brand="at"] .lock,[data-brand="at"] .meta{position:relative; z-index:1;}
 [data-brand="vd"] .lock{isolation:isolate;}
-[data-brand="vd"]:hover .lock::before,[data-brand="vd"]:focus-within .lock::before,
+[data-brand="vd"].open .lock::before,[data-brand="vd"].open .lock::before,
 [data-brand="vd"].playing .lock::before{
   content:""; position:absolute; inset:-30% -10%; z-index:-1;
   background:radial-gradient(ellipse at center,rgba(5,7,10,.58),rgba(5,7,10,.28) 58%,transparent 80%);
@@ -245,7 +245,7 @@ body{
   box-shadow:0 0 8px rgba(var(--c-rgb),.9), 0 0 18px rgba(var(--c-rgb),.45);
   opacity:0; animation:warp 1.5s linear infinite paused;
 }
-[data-brand="vd"]:hover .fx i,[data-brand="vd"]:focus-visible .fx i{animation-play-state:running;}
+[data-brand="vd"].open .fx i,[data-brand="vd"].open .fx i{animation-play-state:running;}
 @keyframes warp{
   0%{opacity:0;   right:-14%}
   8%{opacity:1}
@@ -330,21 +330,21 @@ body{
 [data-brand="cj"] .type{
   filter:saturate(.9) brightness(.94) drop-shadow(0 0 10px rgba(255,111,200,.14));
 }
-.tile:hover .mark,.tile:focus-visible .mark,
-.tile:hover .type,.tile:focus-visible .type{
+.tile.open .mark,.tile.open .mark,
+.tile.open .type,.tile.open .type{
   filter:brightness(1.2) drop-shadow(0 0 6px rgba(var(--c-rgb),.45))
          drop-shadow(0 0 24px rgba(var(--c-rgb),.24));
 }
-[data-brand="cj"]:hover .type,[data-brand="cj"]:focus-visible .type{
+[data-brand="cj"].open .type,[data-brand="cj"].open .type{
   filter:saturate(1) brightness(1.1) drop-shadow(0 0 18px rgba(255,111,200,.5));
 }
-[data-brand="cj"]:hover .mark,[data-brand="cj"]:focus-visible .mark{
+[data-brand="cj"].open .mark,[data-brand="cj"].open .mark{
   filter:drop-shadow(0 0 5px rgba(247,213,7,.45));
 }
 
 /* Wordmarks strike like a neon tube: a stepped flicker, then settle. A smooth
    ease-in reads as a dimmer, not as ignition. */
-.tile:hover .type,.tile:focus-visible .type{animation:ignite .42s steps(1,end);}
+.tile.open .type,.tile.open .type{animation:ignite .42s steps(1,end);}
 @keyframes ignite{
   0%{opacity:.55} 12%{opacity:1} 22%{opacity:.4} 34%{opacity:1}
   46%{opacity:.7} 58%{opacity:1} 100%{opacity:1}
@@ -365,17 +365,17 @@ body{
   letter-spacing:.2em; text-transform:uppercase;
   opacity:.55; transition:opacity .3s var(--ease);
 }
-.tile:hover .meta,.tile:focus-visible .meta{opacity:1;}
+.tile.open .meta,.tile.open .meta{opacity:1;}
 .desc{color:var(--ink-dim); transition:color .3s var(--ease);}
-.tile:hover .desc,.tile:focus-visible .desc{color:var(--ink);}
+.tile.open .desc,.tile.open .desc{color:var(--ink);}
 .url{color:var(--ink-faint); transition:color .3s var(--ease); white-space:nowrap;}
-.tile:hover .url,.tile:focus-visible .url{color:rgba(var(--c-rgb),.95);}
+.tile.open .url,.tile.open .url{color:rgba(var(--c-rgb),.95);}
 .arrow{
   display:inline-block; font-style:normal; font-size:.8em;
   transform:translateX(-3px); opacity:0;
   transition:transform .3s var(--ease),opacity .3s var(--ease);
 }
-.tile:hover .arrow,.tile:focus-visible .arrow{transform:translateX(2px); opacity:1;}
+.tile.open .arrow,.tile.open .arrow{transform:translateX(2px); opacity:1;}
 
 
 /* Alpha Tracker box: near-black, barely lifted, with faint CRT scanlines. */
@@ -385,33 +385,13 @@ body{
     radial-gradient(120% 140% at 50% 120%,rgba(var(--c-rgb),.035),transparent 62%),
     #010203;
 }
-[data-brand="at"].tile:hover,[data-brand="at"].tile:focus-visible{
+[data-brand="at"].tile.open{
   background:
     repeating-linear-gradient(180deg, rgba(var(--c-rgb),.05) 0 1px, transparent 1px 4px),
-    radial-gradient(120% 150% at 50% 118%,rgba(var(--c-rgb),.10),transparent 66%),
-    #020406;
+    radial-gradient(120% 150% at 50% 118%,rgba(var(--c-rgb),.06),transparent 66%),
+    #020305;
 }
 
-/* Alpha Tracker — a scan sweep clipped to the neon shapes (icon + wordmark)
-   via mask-image, so it energises only the logo/text and never the bg/console. */
-[data-brand="at"] .neon{position:relative; display:inline-flex; align-items:center; line-height:0;}
-[data-brand="at"] .glint{
-  position:absolute; inset:0; pointer-events:none; opacity:0;
-  mix-blend-mode:screen; z-index:2;
-  background:linear-gradient(180deg,transparent 0%,
-    rgba(200,255,246,.55) 46%, rgba(150,255,240,.85) 50%, rgba(200,255,246,.55) 54%,
-    transparent 100%);
-  background-repeat:no-repeat; background-size:100% 30%; background-position:0 -40%;
-}
-[data-brand="at"] .n-m .glint{
-  -webkit-mask:url(assets/at-icon.webp) center/contain no-repeat;
-          mask:url(assets/at-icon.webp) center/contain no-repeat;}
-[data-brand="at"] .n-t .glint{
-  -webkit-mask:url(assets/at-wordmark.webp) center/contain no-repeat;
-          mask:url(assets/at-wordmark.webp) center/contain no-repeat;}
-[data-brand="at"]:hover .glint,[data-brand="at"]:focus-within .glint{
-  opacity:1; animation:atGlint 2.8s cubic-bezier(.45,0,.55,1) infinite;}
-@keyframes atGlint{from{background-position:0 -45%}to{background-position:0 145%}}
 
 /* ── Footer: the socials are a FOURTH ROW, not a footnote ─────────
    Same border, same ground, same bracket language as a channel. */
@@ -693,12 +673,12 @@ html{scroll-behavior:smooth;}
     max-height:0; opacity:0; overflow:hidden;
     transition:max-height .42s var(--ease),opacity .3s var(--ease);
   }
-  .tile:hover .mark,.tile:focus-within .mark{
+  .tile.open .mark,.tile.open .mark{
     width:var(--icon-w); margin-inline-end:var(--lock-gap); opacity:1;
   }
-  .tile:hover,.tile:focus-within{--type-h-shown:var(--type-h); --mark-h-shown:var(--mark-h);
+  .tile.open,.tile.open{--type-h-shown:var(--type-h); --mark-h-shown:var(--mark-h);
          min-height:clamp(150px,24vh,220px);}
-  .tile:hover .meta,.tile:focus-within .meta{max-height:5em; opacity:1;}
+  .tile.open .meta,.tile.open .meta{max-height:5em; opacity:1;}
 }
 
 /* ── Instagram feed — clean 3×3 of recent stills + a see-more link ── */
