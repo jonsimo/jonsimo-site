@@ -22,8 +22,10 @@
       var logo = tile.querySelector(".lock");   // the condensed logo itself
       if (!logo) return;
       var t = null;
-      function open()  { clearTimeout(t); tile.classList.add("open"); }
-      function close() { clearTimeout(t); tile.classList.remove("open"); }
+      function open()  { clearTimeout(t); if (tile.classList.contains("open")) return;
+                         tile.classList.add("open"); tile.dispatchEvent(new CustomEvent("box-open")); }
+      function close() { clearTimeout(t); if (!tile.classList.contains("open")) return;
+                         tile.classList.remove("open"); tile.dispatchEvent(new CustomEvent("box-close")); }
       // only a rest ON THE LOGO opens it — sweeping the box to navigate won't
       logo.addEventListener("pointerenter", function () {
         clearTimeout(t); t = setTimeout(open, DWELL);
@@ -343,10 +345,8 @@
     function start() { if (raf) return; tile.classList.add('playing'); size(); reset(); prev = 0; raf = requestAnimationFrame(frame); }
     function stop() { tile.classList.remove('playing'); if (raf) cancelAnimationFrame(raf); raf = null; if (g) g.clearRect(0, 0, W, H); }
 
-    tile.addEventListener('pointerenter', start);
-    tile.addEventListener('pointerleave', stop);
-    tile.addEventListener('focus', start, true);
-    tile.addEventListener('blur', stop, true);
+    tile.addEventListener('box-open', start);
+    tile.addEventListener('box-close', stop);
     window.addEventListener('resize', function () { if (raf) size(); });
   })();
 
@@ -465,9 +465,7 @@
       clearTimeout(timer);
       el.removeEventListener('transitionend', onEnd);
     }
-    tile.addEventListener('pointerenter', start);
-    tile.addEventListener('pointerleave', stop);
-    tile.addEventListener('focusin', start);
-    tile.addEventListener('focusout', stop);
+    tile.addEventListener('box-open', start);
+    tile.addEventListener('box-close', stop);
   })();
 })();
