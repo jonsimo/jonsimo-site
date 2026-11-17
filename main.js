@@ -18,14 +18,73 @@
      focus opens immediately. */
   (function () {
     var DWELL = 80;    // ms the cursor must rest ON THE LOGO before a box opens
+
+    /* ── FLIP morph ────────────────────────────────────────────────
+       The open/closed layout snaps (see styles.css); we measure before and after
+       and animate the DIFFERENCE with transforms, so the wordmark glides and scales
+       as one piece instead of re-flowing every frame. The tile's height eases on the
+       same curve (it is out of flow, so nothing else on the page moves); because its
+       content is centred, the content drifts by half the height delta — folded into
+       the start offset below. */
+    var DUR = 420, EASE = "cubic-bezier(.45,0,.2,1)";
+    var FLIP_MQ = matchMedia("(hover:hover) and (pointer:fine) and (min-width:721px)");
+
+    function parts(tile) {
+      return {
+        type: tile.querySelector(".n-t") || tile.querySelector(".lock > .type"),
+        icon: tile.querySelector(".lock > .n-m") || tile.querySelector(".lock > .mark"),
+        kind: tile.querySelector(".kind"),
+        meta: tile.querySelector(".meta")
+      };
+    }
+    function snap(tile, p) {
+      var T = tile.getBoundingClientRect(), o = { h: T.height };
+      ["type", "icon", "kind", "meta"].forEach(function (k) {
+        var b = p[k].getBoundingClientRect();
+        o[k] = { x: b.left - T.left, y: b.top - T.top, w: b.width, h: b.height };
+      });
+      return o;
+    }
+    function morph(tile, change) {
+      if (reduced || !FLIP_MQ.matches || !tile.animate) { change(); return; }
+      var p = parts(tile);
+      if (!p.type || !p.icon || !p.kind || !p.meta) { change(); return; }
+      var a = snap(tile, p);                       // where everything visibly is right now
+      (tile._flip || []).forEach(function (x) { x.cancel(); });
+      tile._flip = [];
+      change();                                    // snap to the new layout (+ box-open/close events)
+      var b = snap(tile, p), opening = tile.classList.contains("open");
+      var dc = (b.h - a.h) / 2;                    // centred content slides by half the height change
+      function move(A, B, scale) {
+        var s = scale && B.w && B.h ? " scale(" + (A.w / B.w) + "," + (A.h / B.h) + ")" : "";
+        return "translate(" + (A.x - B.x) + "px," + (A.y - B.y + dc) + "px)" + s;
+      }
+      function play(el, frames, extra) {
+        var o = { duration: DUR, easing: EASE, fill: "backwards" };
+        for (var k in extra) o[k] = extra[k];
+        tile._flip.push(el.animate(frames, o));
+      }
+      tile._flip.push(tile.animate(
+        [{ height: a.h + "px", minHeight: a.h + "px" }, { height: b.h + "px", minHeight: b.h + "px" }],
+        { duration: DUR, easing: EASE }));
+      p.type.style.transformOrigin = "0 0";
+      play(p.type, [{ transform: move(a.type, b.type, true) }, { transform: "none" }]);
+      play(p.icon, [{ transform: move(a.icon, b.icon, false), opacity: opening ? 0 : 1 },
+                    { transform: "none", opacity: opening ? 1 : 0 }]);
+      play(p.kind, [{ transform: move(a.kind, b.kind, false) }, { transform: "none" }]);
+      if (opening)
+        play(p.meta, [{ transform: move(a.meta, b.meta, false), opacity: 0 }, { transform: "none", opacity: 1 }],
+             { delay: DUR * 0.3, duration: DUR * 0.7 });
+    }
+
     $$(".tile[data-brand]").forEach(function (tile) {
       var logo = tile.querySelector(".lock");   // the condensed logo itself
       if (!logo) return;
       var t = null;
       function open()  { clearTimeout(t); if (tile.classList.contains("open")) return;
-                         tile.classList.add("open"); tile.dispatchEvent(new CustomEvent("box-open")); }
+                         morph(tile, function () { tile.classList.add("open"); tile.dispatchEvent(new CustomEvent("box-open")); }); }
       function close() { clearTimeout(t); if (!tile.classList.contains("open")) return;
-                         tile.classList.remove("open"); tile.dispatchEvent(new CustomEvent("box-close")); }
+                         morph(tile, function () { tile.classList.remove("open"); tile.dispatchEvent(new CustomEvent("box-close")); }); }
       // only a rest ON THE LOGO opens it — sweeping the box to navigate won't
       logo.addEventListener("pointerenter", function () {
         clearTimeout(t); t = setTimeout(open, DWELL);
@@ -162,7 +221,85 @@
     return true;
   }
 
+  /* ── Confetti ──────────────────────────────────────────────────
+     A perfect corner hit pops confetti out of the logo: paper rectangles + a few
+     round bits, fired radially FAST, then bled off by heavy drag (the inertia
+     dies in ~half a second) so each flake settles into a slow flutter and drifts
+     down at its own terminal speed. No fading — every flake is sized to fall off
+     the bottom of the screen, and the whole show is over by CONFETTI_MS. The loop
+     only runs while there is confetti to draw. */
+  var CONFETTI_MS = 4000;
+  var POP_DRAG    = 6;      // 1/s — bleeds the pop speed: coasts speed/6 px then hangs
+  var confetti = $("#saver-confetti"), cg = confetti && confetti.getContext("2d");
+  var bits = [], craf = null, cprev = 0, CW = 0, CH = 0;
+
+  function sizeConfetti() {
+    if (!confetti) return;
+    var dpr = Math.min(2, window.devicePixelRatio || 1);
+    CW = saver.clientWidth; CH = saver.clientHeight;
+    confetti.width = Math.round(CW * dpr); confetti.height = Math.round(CH * dpr);
+    cg.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+
+  function burst(ox, oy, n) {
+    for (var i = 0; i < n; i++) {
+      var a = Math.random() * Math.PI * 2;
+      var sp = 900 + Math.random() * 1500;                 // fast pop
+      // terminal fall speed: sized so the flake clears the bottom edge between ~2.7s
+      // and ~3.5s (after the ~0.6s pop), leaving margin before CONFETTI_MS.
+      var T  = 3.5 + Math.random() * 0.9;
+      var up = Math.max(0, -Math.sin(a)) * sp / POP_DRAG;   // how far the pop carries it UP, which it must fall back
+      var vt = Math.max(70, (CH - oy + 80 + up) / (T - 0.6));
+      bits.push({
+        x: ox, y: oy,
+        vx: Math.cos(a) * sp, vy: Math.sin(a) * sp, vt: vt,
+        w: 6 + Math.random() * 7, h: 3 + Math.random() * 4,
+        rot: Math.random() * 6.3, vr: (Math.random() - 0.5) * 10,
+        flut: Math.random() * 6.3, vf: 4 + Math.random() * 6,
+        life: 0, ttl: CONFETTI_MS / 1000,
+        round: Math.random() < 0.18,
+        col: COLORS[(Math.random() * COLORS.length) | 0]
+      });
+    }
+    if (!craf) { cprev = 0; craf = requestAnimationFrame(confettiStep); }
+  }
+
+  function confettiStep(now) {
+    if (!cprev) cprev = now;
+    var dt = Math.min((now - cprev) / 1000, 0.05); cprev = now;
+    cg.clearRect(0, 0, CW, CH);
+    for (var i = bits.length - 1; i >= 0; i--) {
+      var b = bits[i];
+      b.life += dt;
+      if (b.life >= b.ttl || b.y > CH + 30) { bits.splice(i, 1); continue; }
+      var k = 1 - Math.exp(-POP_DRAG * dt);          // exponential drag toward the resting drift
+      b.vx += (Math.sin(b.flut * 0.5) * 28 - b.vx) * k;   // pop speed bleeds off; leaves a gentle sway
+      b.vy += (b.vt - b.vy) * k;                           // ...and settles to the slow fall
+      b.x += b.vx * dt; b.y += b.vy * dt;
+      b.rot += b.vr * dt; b.flut += b.vf * dt;
+      cg.fillStyle = b.col;
+      cg.save();
+      cg.translate(b.x, b.y); cg.rotate(b.rot);
+      if (b.round) { cg.beginPath(); cg.arc(0, 0, b.h * 0.7, 0, 6.3); cg.fill(); }
+      else cg.fillRect(-b.w / 2, -b.h / 2 * Math.cos(b.flut), b.w, b.h * Math.cos(b.flut));
+      cg.restore();
+    }
+    craf = bits.length ? requestAnimationFrame(confettiStep) : null;
+    if (!craf) cg.clearRect(0, 0, CW, CH);
+  }
+
+  function clearConfetti() {
+    bits = [];
+    if (craf) cancelAnimationFrame(craf);
+    craf = null;
+    if (cg) cg.clearRect(0, 0, CW, CH);
+  }
+
   function celebrate() {
+    if (cg) {
+      var ox = x + mark.offsetWidth / 2, oy = y + mark.offsetHeight / 2;
+      burst(ox, oy, 220);
+    }
     mark.classList.remove("corner");
     void mark.offsetWidth;
     mark.classList.add("corner");
@@ -197,6 +334,7 @@
   function startSaver() {
     if (reduced || !saver || !saver.hidden) return;
     saver.hidden = false;
+    sizeConfetti();
     var b = bounds();
     x = 40 + Math.random() * Math.max(1, b.w - 80);
     y = 40 + Math.random() * Math.max(1, b.h - 80);
@@ -213,6 +351,7 @@
     if (!saver || saver.hidden) return;
     saver.hidden = true;
     mark.classList.remove("corner");
+    clearConfetti();
     if (raf) cancelAnimationFrame(raf);
     raf = null;
   }
@@ -228,6 +367,7 @@
       .forEach(function (ev) { addEventListener(ev, poke, { passive: true }); });
     addEventListener("resize", function () {
       if (saver.hidden) return;
+      sizeConfetti();
       var b = bounds();
       x = Math.min(x, b.w);
       y = Math.min(y, b.h);

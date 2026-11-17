@@ -35,6 +35,11 @@
   --tty:"Glass TTY VT220","Courier New",Courier,monospace;
   --mono:ui-monospace,"SFMono-Regular","Cascadia Mono",Menlo,Monaco,Consolas,monospace;
   --ease:cubic-bezier(.2,.7,.2,1);
+  /* Box expand/collapse: one duration + a symmetric ease for EVERY property, so the
+     tile, icon, wordmark and caption move as a single gesture. A fast-start ease
+     front-loads the motion and reads as a lurch. */
+  --dur:.4s;
+  --ease-io:cubic-bezier(.45,0,.2,1);
   color-scheme:dark;
 }
 
@@ -150,8 +155,8 @@ body{
   background:
     radial-gradient(120% 140% at 50% 120%,rgba(var(--c-rgb),.05),transparent 62%),
     var(--tile-bg, var(--bg-lift));
-  transition:border-color .25s var(--ease),background .25s var(--ease),
-             transform .14s var(--ease),min-height .24s var(--ease);
+  transition:border-color var(--dur) var(--ease-io),background var(--dur) var(--ease-io),
+             transform .14s var(--ease),min-height var(--dur) var(--ease-io);
 }
 /* Everything that used to be permanent chrome is now the hover state, so the
    resting page is just three logos on black. */
@@ -319,7 +324,13 @@ body{
 [data-brand="vd"] .mark{height:var(--mark-h-shown,var(--mark-h));}
 [data-brand="at"] .mark{height:var(--mark-h-shown,var(--mark-h));}
 
-[data-brand="vd"] .type{height:var(--type-h-shown,var(--type-h));}
+[data-brand="vd"] .type{height:var(--type-h-shown,var(--type-h));
+  /* The PNG's left ~14% is speed lines, so centring the image centres the lines, not
+     the words. Ink measured on the asset: words span x=125..855 of 860, centre 490
+     vs image centre 430, so the words sit right of centre → nudge the image LEFT
+     60/860 = 7% of its own width. Uses the individual `translate` property so it
+     never fights the FLIP `transform`. */
+  translate:-7% 0;}
 [data-brand="cj"] .type{height:var(--type-h-shown,var(--type-h));}
 [data-brand="at"] .type{height:var(--type-h-shown,var(--type-h));
   filter:brightness(1.05) drop-shadow(0 0 5px rgba(var(--c-rgb),.42)) drop-shadow(0 0 14px rgba(var(--c-rgb),.18));}
@@ -344,10 +355,10 @@ body{
 
 /* Wordmarks strike like a neon tube: a stepped flicker, then settle. A smooth
    ease-in reads as a dimmer, not as ignition. */
-.tile.open .type,.tile.open .type{animation:ignite .3s steps(1,end);}
+.tile.open .type,.tile.open .type{animation:ignite .4s steps(1,end);}
 @keyframes ignite{
-  0%{opacity:.55} 12%{opacity:1} 22%{opacity:.4} 34%{opacity:1}
-  46%{opacity:.7} 58%{opacity:1} 100%{opacity:1}
+  0%{opacity:.8} 12%{opacity:1} 22%{opacity:.7} 34%{opacity:1}
+  46%{opacity:.88} 58%{opacity:1} 100%{opacity:1}
 }
 
 /* The wordmarks ARE the names — keep the text for screen readers only. */
@@ -517,6 +528,7 @@ body{
   filter:drop-shadow(0 0 10px currentColor);
   transition:color .25s linear;
 }
+.saver-confetti{position:absolute; inset:0; width:100%; height:100%; pointer-events:none;}
 /* The corner hit — the entire reason anyone watches this. */
 .saver-mark.corner{animation:cornerHit 1.4s var(--ease);}
 @keyframes cornerHit{
@@ -691,8 +703,8 @@ html{scroll-behavior:smooth;}
   /* icon collapses to nothing, then slides open on hover */
   .mark{
     width:0; margin-inline-end:0; opacity:0;
-    transition:width .24s var(--ease),margin .24s var(--ease),
-               opacity .2s var(--ease),filter .24s var(--ease);
+    transition:width var(--dur) var(--ease-io),margin var(--dur) var(--ease-io),
+               opacity .3s var(--ease-io),filter var(--dur) var(--ease-io);
   }
   /* wordmark shrinks to a thin bar when collapsed, grows back on hover */
   .tile{--type-h-shown:min(var(--type-h), clamp(58px,8.6vh,94px)); --mark-h-shown:0px;
@@ -700,18 +712,56 @@ html{scroll-behavior:smooth;}
   /* VD wordmark carries a ship glint + two lines, so it reads smaller at the
      shared cap — give it a taller collapsed cap to match CJ/AT optically. */
   [data-brand="vd"]{--type-h-shown:min(var(--type-h), clamp(76px,11.5vh,124px));}
-  .type{transition:height .24s var(--ease),filter .24s var(--ease),opacity .2s;}
+  .type{transition:height var(--dur) var(--ease-io),filter var(--dur) var(--ease-io),opacity .2s;}
   /* caption folds away */
   .meta{
     max-height:0; opacity:0; overflow:hidden;
-    transition:max-height .26s var(--ease),opacity .2s var(--ease);
+    transition:max-height var(--dur) var(--ease-io),opacity .3s var(--ease-io);
   }
   .tile.open .mark,.tile.open .mark{
     width:var(--icon-w); margin-inline-end:var(--lock-gap); opacity:1;
+    transition-delay:0s,0s,.1s,0s;      /* icon fades in once the room has started opening */
   }
   .tile.open,.tile.open{--type-h-shown:var(--type-h); --mark-h-shown:var(--mark-h);
          min-height:clamp(150px,24vh,220px);}
-  .tile.open .meta,.tile.open .meta{max-height:5em; opacity:1;}
+  .tile.open .meta,.tile.open .meta{max-height:5em; opacity:1; transition-delay:0s,.14s;}  /* text lands as the box opens */
+}
+
+/* ── Desktop expand = overlay + FLIP ─────────────────────────────
+   Each tile lives in a fixed-height SLOT, so opening one never moves the page: the
+   tile is lifted out of flow and grows over its neighbours (down from the top
+   slot, up from the bottom one, both ways from the middle one — the flex
+   alignment on the slot sets the anchor via the absolutely-positioned child's
+   static position). The open/closed layout snaps and main.js morphs old geometry
+   into new with transforms: wordmark glides + scales, icon slides out from behind
+   it, the tile's height eases, the caption fades in. The icon is out of flow in
+   BOTH states at the same size, so the wordmark is never shoved sideways. */
+@media (hover:hover) and (pointer:fine) and (min-width:721px){
+  .channels{--slot-h:clamp(100px,15vh,146px);}
+  .slot{position:relative; z-index:1; height:var(--slot-h); display:flex;}
+  .slot:nth-child(1){align-items:flex-start;}
+  .slot:nth-child(2){align-items:center;}
+  .slot:nth-child(3){align-items:flex-end;}
+  .slot:has(.tile.open){z-index:4;}
+  .tile{
+    position:absolute; left:0; right:0; height:var(--slot-h); min-height:0;
+    transition:border-color var(--dur) var(--ease-io),background var(--dur) var(--ease-io),
+               box-shadow var(--dur) var(--ease-io),transform .14s var(--ease);
+  }
+  .tile.open{height:auto; min-height:clamp(150px,24vh,220px); box-shadow:0 16px 44px rgba(0,0,0,.6);}
+  .lock{position:relative;}
+  .tile.open .lock{min-height:var(--mark-h); padding-inline-start:calc(var(--icon-w) + var(--lock-gap));}
+  [data-brand="vd"].open .type{translate:none;}   /* open: the icon sits beside it, so the whole lockup is what's centred */
+  .tile .lock > .mark,.tile .lock > .n-m{
+    position:absolute; left:0; top:0; bottom:0; margin:auto 0;
+    width:var(--icon-w); height:var(--mark-h); opacity:0; pointer-events:none;
+    transition:filter var(--dur) var(--ease-io);
+  }
+  .tile .lock > .n-m{display:block; line-height:0;}
+  .tile .lock > .n-m .mark{width:100%; height:100%; opacity:1; margin:0 !important; transition:none;}
+  .tile.open .lock > .mark,.tile.open .lock > .n-m{opacity:1; margin:auto 0; width:var(--icon-w);}
+  .type{transition:filter var(--dur) var(--ease-io),opacity .2s;}
+  .meta,.tile.open .meta{transition:none;}
 }
 
 /* ── Instagram feed — clean 3×3 of recent stills + a see-more link ── */
