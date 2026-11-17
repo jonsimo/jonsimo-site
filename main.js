@@ -17,7 +17,7 @@
      across them to navigate doesn't make each one half-animate. Keyboard
      focus opens immediately. */
   (function () {
-    var DWELL = 230;   // ms the cursor must rest ON THE LOGO before a box opens
+    var DWELL = 80;    // ms the cursor must rest ON THE LOGO before a box opens
     $$(".tile[data-brand]").forEach(function (tile) {
       var logo = tile.querySelector(".lock");   // the condensed logo itself
       if (!logo) return;
@@ -458,7 +458,7 @@
         return;
       }
       el.addEventListener('transitionend', onEnd);
-      timer = setTimeout(tick, 160);
+      timer = setTimeout(tick, 40);
     }
     function stop() {
       running = false;

@@ -150,8 +150,8 @@ body{
   background:
     radial-gradient(120% 140% at 50% 120%,rgba(var(--c-rgb),.05),transparent 62%),
     var(--tile-bg, var(--bg-lift));
-  transition:border-color .35s var(--ease),background .35s var(--ease),
-             transform .35s var(--ease),min-height .38s var(--ease);
+  transition:border-color .25s var(--ease),background .25s var(--ease),
+             transform .14s var(--ease),min-height .24s var(--ease);
 }
 /* Everything that used to be permanent chrome is now the hover state, so the
    resting page is just three logos on black. */
@@ -229,7 +229,7 @@ body{
 /* Lockup + caption ride above the sim; a soft scrim keeps the wordmark legible
    over the moving field without hiding the action around it. */
 [data-brand="vd"] .lock,[data-brand="vd"] .meta{position:relative; z-index:1;}
-[data-brand="at"] .lock,[data-brand="at"] .meta{position:relative; z-index:1;}
+[data-brand="at"] .lock,[data-brand="at"] .meta,[data-brand] .kind{position:relative; z-index:1;}
 [data-brand="vd"] .lock{isolation:isolate;}
 [data-brand="vd"].open .lock::before,[data-brand="vd"].open .lock::before,
 [data-brand="vd"].playing .lock::before{
@@ -301,7 +301,7 @@ body{
 }
 /* A fixed icon column keeps every mark the same width, so their left edges —
    and therefore the whole icon stack — align down the page. */
-.mark{flex:0 0 var(--icon-w); width:var(--icon-w); max-width:none; object-fit:contain; object-position:center; will-change:width;}
+.mark{flex:0 0 var(--icon-w); width:var(--icon-w); max-width:none; object-fit:contain; object-position:center;}
 .mark,.type{
   display:block; height:auto;
   max-height:100%;
@@ -344,7 +344,7 @@ body{
 
 /* Wordmarks strike like a neon tube: a stepped flicker, then settle. A smooth
    ease-in reads as a dimmer, not as ignition. */
-.tile.open .type,.tile.open .type{animation:ignite .42s steps(1,end);}
+.tile.open .type,.tile.open .type{animation:ignite .3s steps(1,end);}
 @keyframes ignite{
   0%{opacity:.55} 12%{opacity:1} 22%{opacity:.4} 34%{opacity:1}
   46%{opacity:.7} 58%{opacity:1} 100%{opacity:1}
@@ -355,6 +355,18 @@ body{
   position:absolute; width:1px; height:1px; overflow:hidden;
   clip-path:inset(50%); white-space:nowrap;
 }
+
+/* What the channel IS — always visible, so the collapsed logos aren't a guessing
+   game. Sits directly under the lockup; the caption (desc + url) opens beneath it. */
+.kind{
+  display:block; text-align:center; line-height:1;
+  font-family:var(--tty); font-size:clamp(13px,1.7vw,17px);
+  letter-spacing:.14em; text-transform:uppercase;
+  color:color-mix(in srgb,rgb(var(--c-rgb)) 62%,#fff);
+  text-shadow:0 0 10px rgba(var(--c-rgb),.4);
+  transition:color .24s var(--ease),text-shadow .24s var(--ease);
+}
+.tile.open .kind{color:color-mix(in srgb,rgb(var(--c-rgb)) 78%,#fff); text-shadow:0 0 12px rgba(var(--c-rgb),.6);}
 
 /* Caption sits in the flow directly under the lockup, so the channel reads as
    one block instead of a logo with a label pinned to the floor. */
@@ -679,8 +691,8 @@ html{scroll-behavior:smooth;}
   /* icon collapses to nothing, then slides open on hover */
   .mark{
     width:0; margin-inline-end:0; opacity:0;
-    transition:width .38s var(--ease),margin .38s var(--ease),
-               opacity .3s var(--ease),filter .35s var(--ease);
+    transition:width .24s var(--ease),margin .24s var(--ease),
+               opacity .2s var(--ease),filter .24s var(--ease);
   }
   /* wordmark shrinks to a thin bar when collapsed, grows back on hover */
   .tile{--type-h-shown:min(var(--type-h), clamp(58px,8.6vh,94px)); --mark-h-shown:0px;
@@ -688,11 +700,11 @@ html{scroll-behavior:smooth;}
   /* VD wordmark carries a ship glint + two lines, so it reads smaller at the
      shared cap — give it a taller collapsed cap to match CJ/AT optically. */
   [data-brand="vd"]{--type-h-shown:min(var(--type-h), clamp(76px,11.5vh,124px));}
-  .type{transition:height .38s var(--ease),filter .35s var(--ease),opacity .2s;}
+  .type{transition:height .24s var(--ease),filter .24s var(--ease),opacity .2s;}
   /* caption folds away */
   .meta{
     max-height:0; opacity:0; overflow:hidden;
-    transition:max-height .42s var(--ease),opacity .3s var(--ease);
+    transition:max-height .26s var(--ease),opacity .2s var(--ease);
   }
   .tile.open .mark,.tile.open .mark{
     width:var(--icon-w); margin-inline-end:var(--lock-gap); opacity:1;
